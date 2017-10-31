@@ -7,7 +7,6 @@ For more information on the Yelp Dataset Challenge please visit http://yelp.com/
 import argparse
 import collections
 import csv
-# import simplejson as json
 import json
 import re
 
@@ -119,10 +118,18 @@ if __name__ == '__main__':
             help='The json file to convert.',
             )
 
+    parser.add_argument(
+            'csv_file',
+            type=str,
+            help='The csv file to conver to.',
+            )
+
     args = parser.parse_args()
-
     json_file = args.json_file
-    csv_file = '{0}.csv'.format(json_file.split('.json')[0])
+    csv_file = args.csv_file
 
+    print "getting column names"
     column_names = get_superset_of_column_names_from_file(json_file)
+
+    print "reading and writing file"
     read_and_write_file(json_file, csv_file, column_names, delimiter='\t')
