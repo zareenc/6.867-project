@@ -13,6 +13,7 @@ def get_review_data(csv_file):
                              delimiter='\t', skip_header=1, comments=None, \
                              filling_values=filling)
     print "done getting data"
+    return data
 
 def get_business_data(csv_file):
     pass
@@ -35,6 +36,6 @@ if __name__ == "__main__":
     csv_file = 'data/%s.csv' % type
 
     if type == 'review':
-        get_review_data(csv_file)
+        data = get_review_data(csv_file)
     elif type == 'business':
-        get_business_data(csv_file)
+        data = get_business_data(csv_file)
