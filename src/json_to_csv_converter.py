@@ -7,10 +7,9 @@ For more information on the Yelp Dataset Challenge please visit http://yelp.com/
 import argparse
 import collections
 import csv
-# import simplejson as json
 import json
 import re
-
+import pdb
 
 def read_and_write_file(json_file_path, csv_file_path, column_names, delimiter=None):
     """Read in the json dataset file and write it out to a csv file, given the column names."""
@@ -106,6 +105,38 @@ def get_row(line_contents, column_names):
             row.append('')
     return row
 
+'''
+Creates a set with values from the column with target_col_name if it contains the right filtering values and/or categories
+
+json_file_path is a string of the json file to parse.
+target_col_name is a string of a single column name.
+scalar_filter_col_names is a list of strings of single-valued column names to filter by,
+    for example ["state", "name"].
+scalar_filter_values is a list of values to filter for. It should be the same length as scalar_filter_col_names,
+    and each value should correspond to the same index of column name, including its datatype
+filter_categories is a list of strings to filter by in the "categories" field of each line. If the json file doesn't
+    have a "categories" field, then pass in an empty list
+
+
+Returns a set of the values in the target_col_name in the json_file that match the given criteria
+'''
+def create_filtered_set(json_file_path, target_col_name, scalar_filter_col_names, scalar_filter_values, filter_categories):
+    data = set()
+    with open(json_file_path) as fin:
+        for line in fin:
+            line_contents = json.loads(line)
+            record_data = True
+            for count in range(len(scalar_filter_col_names)):
+                col_name = scalar_filter_col_names[count]
+                if line_contents[col_name] != scalar_filter_values[count]:
+                    record_data = False
+            for category in filter_categories:
+                if category not in line_contents["categories"]:
+                    record_data = False
+            if record_data:
+                data.add(line_contents[target_col_name])
+    return data
+
 if __name__ == '__main__':
     """Convert a yelp dataset file from json to csv."""
 
@@ -122,7 +153,18 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     json_file = args.json_file
+
+    ## Create new unfiltered csv file ##
     csv_file = '{0}.csv'.format(json_file.split('.json')[0])
 
     column_names = get_superset_of_column_names_from_file(json_file)
     read_and_write_file(json_file, csv_file, column_names, delimiter='\t')
+
+    ## Create filtered business id set ##
+
+    target_column_name = "business_id"
+    scalar_filter_columns = ["state"]
+    scalar_filter_values = ["AZ"]
+    filter_categories = ["Restaurants"]
+
+    filtered_business_ids = create_filtered_set(json_file, target_column_name, scalar_filter_columns, scalar_filter_values, filter_categories)
