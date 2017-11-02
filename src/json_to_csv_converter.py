@@ -150,14 +150,22 @@ if __name__ == '__main__':
             help='The json file to convert.',
             )
 
-    args = parser.parse_args()
+    parser.add_argument(
+            'csv_file',
+            type=str,
+            help='The csv file to conver to.',
+            )
 
+    args = parser.parse_args()
     json_file = args.json_file
 
     ## Create new unfiltered csv file ##
-    csv_file = '{0}.csv'.format(json_file.split('.json')[0])
+    csv_file = args.csv_file
 
+    print "getting column names"
     column_names = get_superset_of_column_names_from_file(json_file)
+
+    print "reading and writing file"
     read_and_write_file(json_file, csv_file, column_names, delimiter='\t')
 
     ## Create filtered business id set ##
@@ -167,4 +175,6 @@ if __name__ == '__main__':
     scalar_filter_values = ["AZ"]
     filter_categories = ["Restaurants"]
 
+    print "filtering businesses"
     filtered_business_ids = create_filtered_set(json_file, target_column_name, scalar_filter_columns, scalar_filter_values, filter_categories)
+    print "number of filtered businesses:", len(filtered_business_ids)
