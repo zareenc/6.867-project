@@ -1,2 +1,8 @@
-# 6.867-project
-6.867 Final Project
+# 6.867 Final Project
+
+## Examples
+Load review data:
+```
+from get_yelp_data import *
+data = get_review_data('../data/review.csv')
+```
