@@ -1,5 +1,16 @@
 # 6.867 Final Project
 
+## Requirements
+- Numpy
+- NLTK packages:
+```
+$ sudo pip install -U nltk
+$ python
+> import nltk
+> nltk.download('punkt')
+> nltk.download('averaged_perceptron_tagger')
+```
+
 ## Examples
 Load review data:
 ```
