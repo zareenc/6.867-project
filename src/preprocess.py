@@ -53,8 +53,6 @@ class Preprocessor:
                     current_tokens = self.tokens[review_id]
                     stemmer = nltk.stem.snowball.SnowballStemmer("english")
                     stemmed_tokens = [stemmer.stem(token) for token in current_tokens]
-                    print stemmed_tokens
-                    print ' '.join(stemmed_tokens)
                     self.tokens[review_id] = [token for token in stemmed_tokens]
 
                 # adds unique tokens to dictionary
@@ -82,7 +80,7 @@ class Preprocessor:
 
 
     """ featurized inputs X and labels Y """
-    def featurize(self):
+    def featurize(self, some_dictionary):
         # X is feature matrix from the bag of words model
         # Y_multi is multi-class labels matrix
         X = np.zeros((self.n, self.d))
@@ -96,13 +94,13 @@ class Preprocessor:
 
             if review_id in self.good_ids:
                 for token in self.tokens[review_id]:
-                    if token in self.dictionary:
-                        X[i][self.dictionary[token]] = 1
+                    if token in some_dictionary:
+                        X[i][some_dictionary[token]] = 1
 
             Y_multi[i] = int(rating)
         
         # Y_binary is binary labels matrix
-        # create binary star ratings where 1-2 is -1 and 3-5 is +1
+        # binary star ratings where 1-2 is -1 and 3-5 is +1
         Y_binary = np.where((Y_multi > 2), 1, -1)
 
         return (X, Y_multi, Y_binary)
@@ -118,14 +116,10 @@ if __name__ == "__main__":
     preprocess = Preprocessor(csv_file)
 
     preprocess.cleanup()
-    X, Y_m, Y_b = preprocess.featurize()
+    dic = preprocess.get_dictionary()
+    X, Y_m, Y_b = preprocess.featurize(dic)
 
     print "X (feature matrix) is: ", X
     print "Y_m (multi-class labels) is: ", Y_m
     print "Y_b (binary labels) is: ", Y_b
-
-    print preprocess.get_dictionary()
-
-#plurals = ['caresses', 'flies', 'dies', 'mules', 'denied', 'died', 'agreed', 'owned', 'humbled', 'sized', 'meeting', 'stating', 'siezing', 'itemization', 'sensational', 'traditional', 'reference', 'colonizer', 'plotted']
-
 
