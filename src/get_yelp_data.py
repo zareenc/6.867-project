@@ -2,6 +2,7 @@ from numpy import genfromtxt
 import numpy as np
 import argparse
 import pdb
+import csv
 
 def get_review_data(csv_file):
     names = ('funny', 'user_id', 'review_id', 'text', 'business_id', \
@@ -72,6 +73,35 @@ def get_business_data(csv_file):
     print "done getting business data"
     return data
 
+def construct_filtered_set(txt_file_path):
+    title = ""
+    filtered_values = set()
+    first_line = True
+    with open(txt_file_path, 'r') as fin:
+        #while line = fin.readline():
+        for line in fin:
+            if first_line:
+                title = line.strip()
+                first_line = False
+            else:
+                filtered_values.add(line.strip())
+    return title, filtered_values
+
+def get_filtered_review_data(review_data, filter_column_index, filtered_value_set):
+    filtered_reviews = []
+    for review in review_data:
+        if review[filter_column_index] in filtered_value_set:
+            filtered_reviews.append(review)
+    return filtered_reviews
+
+def write_reviews_to_csv_file(input_data, csv_file_path):
+    names = ('funny', 'user_id', 'review_id', 'text', 'business_id', \
+                 'stars', 'date', 'useful', 'cool')
+    with open(csv_file_path, 'wb+') as fout:
+        csv_file = csv.writer(fout)
+        csv_file.writerow(names)
+        for review in input_data:
+            csv_file.writerow(review)    
 
 if __name__ == "__main__":
 
@@ -83,13 +113,29 @@ if __name__ == "__main__":
             type=str,
             help='The csv file to load.',
             )
+    parser.add_argument(
+            'filter_values',
+            type=str,
+            help='The text files of values to filter reviews.',
+            )
 
     args = parser.parse_args()
     file_type = args.type
+    filter_values = args.filter_values
 
     csv_file = '../data/%s.csv' % file_type
 
+    filter_reviews = False
     if file_type == 'review':
         data = get_review_data(csv_file)
+
+        if filter_reviews:
+            label, business_ids = construct_filtered_set(filter_values)
+            if label == "business_id":
+                col_index = 4
+                filtered_data = get_filtered_review_data(data, col_index, business_ids)
+                write_to_csv_file(filtered_data, "../data/filtered_reviews.csv")
+
     elif file_type == 'business':
         data = get_business_data(csv_file)
+
