@@ -105,6 +105,12 @@ def get_row(line_contents, column_names):
             row.append('')
     return row
 
+def write_txt_file(txt_file_path, data_name, data_to_write, delimiter=None):
+    with open(txt_file_path, 'wb+') as fout:
+        fout.write(data_name + "\n")
+        for data_point in data_to_write:
+            fout.write(data_point + "\n")
+
 '''
 Creates a set with values from the column with target_col_name if it contains the right filtering values and/or categories
 
@@ -153,7 +159,13 @@ if __name__ == '__main__':
     parser.add_argument(
             'csv_file',
             type=str,
-            help='The csv file to conver to.',
+            help='The csv file to convert to.',
+            )
+
+    parser.add_argument(
+            'filtered_txt_file',
+            type=str,
+            help='The text file to write out filtered data',
             )
 
     args = parser.parse_args()
@@ -168,7 +180,8 @@ if __name__ == '__main__':
     print "reading and writing file"
     read_and_write_file(json_file, csv_file, column_names, delimiter='\t')
 
-    ## Create filtered business id set ##
+    ## Create filtered business id set and write it to a file ##
+    filtered_txt_file = args.filtered_txt_file
 
     target_column_name = "business_id"
     scalar_filter_columns = ["state"]
@@ -178,3 +191,6 @@ if __name__ == '__main__':
     print "filtering businesses"
     filtered_business_ids = create_filtered_set(json_file, target_column_name, scalar_filter_columns, scalar_filter_values, filter_categories)
     print "number of filtered businesses:", len(filtered_business_ids)
+
+    print "writing filtered business ids to text file"
+    write_txt_file(filtered_txt_file, "business_id", filtered_business_ids)
