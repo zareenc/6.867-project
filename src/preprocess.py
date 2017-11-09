@@ -12,10 +12,11 @@ class Preprocessor:
     STOPWORDS = set(nltk.corpus.stopwords.words('english'))
 
 
-    def __init__(self, csv_file):
+    def __init__(self, csv_file, verbose=False):
         self.review_data = get_review_data(csv_file)
         self.n, = self.review_data.shape
         self.d = None   # later set to dictionary size
+        self.verbose = verbose
 
         self.errors = 0
         self.good_ids = set()
@@ -67,14 +68,15 @@ class Preprocessor:
                 self.good_ids.add(review_id)
             
             except:
-                #print review
                 self.errors += 1
-                print "Couldn't tokenize review", review_id
+                if self.verbose:
+                    print "Couldn't tokenize review", review_id
 
         self.d = len(self.dictionary)
-        print "total reviews: %d" % self.n
-        print "total errors: %d" % self.errors
-        print "dictionary size: %d" % self.d
+        if self.verbose:
+            print "total reviews: %d" % self.n
+            print "total errors: %d" % self.errors
+            print "dictionary size: %d" % self.d
 
         return
 
