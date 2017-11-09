@@ -1,6 +1,7 @@
 # 6.867 Final Project
 
 ## Requirements
+- Python 2.7
 - Numpy
 - NLTK packages:
 ```
@@ -22,10 +23,17 @@ data = get_review_data('../data/review.csv')
 Get features and labels from review data:
 ```
 from preprocess import *
-preprocessor = Preprocessor('../data/review.csv')
-preprocessor.cleanup()
-dict = preprocessor.get_dictionary()
-X, Y_multi, Y_binary = preprocessor.featurize(dict)
+
+# training data
+preprocessor_train = Preprocessor('../data/review_train.csv')
+preprocessor_train.cleanup()
+dict = preprocessor_train.get_dictionary()
+X_train, Y_train_multi, Y_train_binary = preprocessor_train.featurize(dict)
+
+# test data
+preprocessor_test = Preprocessor('../data/review_test.csv')
+preprocessor_test.cleanup()
+X_test, Y_test_multi, Y_test_binary = preprocessor_test.featurize(dict)
 ```
 
 ## Parsing the Original JSON Data
