@@ -9,15 +9,15 @@ import pdb
 training_csv = 'data/filtered_az_reviews.csv'
 test_csv = 'data/filtered_nv_reviews.csv'
 
-train_pre = Preprocessor(training_csv)
-test_pre = Preprocessor(test_csv)
+pre_train = Preprocessor(training_csv)
+pre_test = Preprocessor(test_csv)
 
-train_pre.cleanup()
-train_dict = train_pre.get_dictionary()
-X_TRAIN, Y_TRAIN_MULTI, Y_TRAIN_BINARY = train_pre.featurize(train_dict)
+pre_train.cleanup()
+dict_train = pre_train.get_dictionary()
+X_TRAIN, Y_TRAIN_MULTI, Y_TRAIN_BINARY = pre_train.featurize(dict_train)
 
-test_pre.cleanup()
-X_TEST, Y_TEST_MULTI, Y_TEST_BINARY = test_pre.featurize(train_dict)
+pre_test.cleanup()
+X_TEST, Y_TEST_MULTI, Y_TEST_BINARY = pre_test.featurize(dict_train)
 
 
 
@@ -26,7 +26,7 @@ def train_perceptron(X_train, Y_train):
 	p.fit(X_train, Y_train)
 	return p
 
-def get_score(linear_model, X_test, Y_test):
+def get_perceptron_score(linear_model, X_test, Y_test):
 	return linear_model.score(X_test, Y_test)
 
 
@@ -38,4 +38,4 @@ if __name__ == "__main__":
 	print "w is ", w
 	print "w0 is ", w0
 
-	print get_score(model, X_TEST, Y_TEST_BINARY)
+	print get_perceptron_score(model, X_TEST, Y_TEST_BINARY)
