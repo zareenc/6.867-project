@@ -83,7 +83,8 @@ class Preprocessor:
     def featurize(self, some_dictionary):
         # X is feature matrix from the bag of words model
         # Y_multi is multi-class labels matrix
-        X = np.zeros((self.n, self.d))
+        l = len(some_dictionary)
+        X = np.zeros((self.n, l))
         Y_multi = np.zeros((self.n, 1))
 
         for i in xrange(self.n):
