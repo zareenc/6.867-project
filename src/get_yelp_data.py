@@ -94,11 +94,11 @@ def get_filtered_review_data(review_data, filter_column_index, filtered_value_se
             filtered_reviews.append(review)
     return filtered_reviews
 
-def write_reviews_to_csv_file(input_data, csv_file_path):
+def write_reviews_to_csv_file(input_data, csv_file_path, delimiter='\t'):
     names = ('funny', 'user_id', 'review_id', 'text', 'business_id', \
                  'stars', 'date', 'useful', 'cool')
     with open(csv_file_path, 'wb+') as fout:
-        csv_file = csv.writer(fout)
+        csv_file = csv.writer(fout, delimiter=delimiter)
         csv_file.writerow(names)
         for review in input_data:
             csv_file.writerow(review)    
@@ -109,7 +109,12 @@ if __name__ == "__main__":
             description='Get Yelp data.',
             )
     parser.add_argument(
-            'type',
+            'file_type',
+            type=str,
+            help='Review or business',
+            )
+    parser.add_argument(
+            'csv_file',
             type=str,
             help='The csv file to load.',
             )
@@ -118,23 +123,31 @@ if __name__ == "__main__":
             type=str,
             help='The text files of values to filter reviews.',
             )
+    parser.add_argument(
+            'filtered_file_name',
+            type=str,
+            help='Filepath for csv file containing filtered reviews.',
+            )
 
     args = parser.parse_args()
-    file_type = args.type
+    file_type = args.file_type
+    csv_file = args.csv_file
     filter_values = args.filter_values
+    filtered_file_name = args.filtered_file_name
 
-    csv_file = '../data/%s.csv' % file_type
-
-    filter_reviews = False
+    filter_reviews = True
     if file_type == 'review':
         data = get_review_data(csv_file)
 
         if filter_reviews:
+            print "constructing filtered set"
             label, business_ids = construct_filtered_set(filter_values)
             if label == "business_id":
                 col_index = 4
+                print "getting filtered review data"
                 filtered_data = get_filtered_review_data(data, col_index, business_ids)
-                write_to_csv_file(filtered_data, "../data/filtered_reviews.csv")
+                print "writing filtered review data to csv file"
+                write_reviews_to_csv_file(filtered_data, filtered_file_name)
 
     elif file_type == 'business':
         data = get_business_data(csv_file)
