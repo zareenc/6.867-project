@@ -10,4 +10,4 @@ def binary_classif_err(pred, labels):
     inner_prod[inner_prod == 1] = 0 # 1 -> correct
     inner_prod[inner_prod == -1] = 1 # -1 -> error
     errors = np.sum(inner_prod)
-    return float(errors)
+    return float(errors), float(len(pred) - errors) / len(pred)
