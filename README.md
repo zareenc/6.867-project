@@ -18,3 +18,12 @@ Load review data:
 from get_yelp_data import *
 data = get_review_data('../data/review.csv')
 ```
+
+Get features and labels from review data:
+```
+from preprocess import *
+preprocessor = Preprocessor('../data/review.csv')
+preprocessor.cleanup()
+dict = preprocessor.get_dictionary()
+X, Y_multi, Y_binary = preprocessor.featurize(dict)
+```
