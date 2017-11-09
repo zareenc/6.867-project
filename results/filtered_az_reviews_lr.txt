@@ -1,0 +1,36 @@
+regularization: l1 scaling factor: 100.0 lambda: 0.01 
+train acc: 0.998330550918 val acc: 0.86432160804 test acc: 0.879396984925 
+
+regularization: l1 scaling factor: 100.0 lambda: 0.1 
+train acc: 0.998330550918 val acc: 0.854271356784 test acc: 0.879396984925 
+
+regularization: l1 scaling factor: 100.0 lambda: 0.5 
+train acc: 0.998330550918 val acc: 0.844221105528 test acc: 0.874371859296 
+
+regularization: l1 scaling factor: 100.0 lambda: 1.0 
+train acc: 0.9816360601 val acc: 0.849246231156 test acc: 0.889447236181 
+
+regularization: l1 scaling factor: 100.0 lambda: 5.0 
+train acc: 0.864774624374 val acc: 0.824120603015 test acc: 0.889447236181 
+
+regularization: l1 scaling factor: 100.0 lambda: 10.0 
+train acc: 0.849749582638 val acc: 0.834170854271 test acc: 0.899497487437 
+
+regularization: l2 scaling factor: 100.0 lambda: 0.01 
+train acc: 0.998330550918 val acc: 0.86432160804 test acc: 0.889447236181 
+
+regularization: l2 scaling factor: 100.0 lambda: 0.1 
+train acc: 0.998330550918 val acc: 0.859296482412 test acc: 0.889447236181 
+
+regularization: l2 scaling factor: 100.0 lambda: 0.5 
+train acc: 0.998330550918 val acc: 0.86432160804 test acc: 0.884422110553 
+
+regularization: l2 scaling factor: 100.0 lambda: 1.0 
+train acc: 0.998330550918 val acc: 0.854271356784 test acc: 0.884422110553 
+
+regularization: l2 scaling factor: 100.0 lambda: 5.0 
+train acc: 0.983305509182 val acc: 0.859296482412 test acc: 0.884422110553 
+
+regularization: l2 scaling factor: 100.0 lambda: 10.0 
+train acc: 0.951585976628 val acc: 0.844221105528 test acc: 0.884422110553 
+
