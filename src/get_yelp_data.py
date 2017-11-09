@@ -124,7 +124,7 @@ if __name__ == "__main__":
             help='The text files of values to filter reviews.',
             )
     parser.add_argument(
-            'filtered_file_name',
+            '--filtered_file_name',
             type=str,
             help='Filepath for csv file containing filtered reviews.',
             )
@@ -133,13 +133,12 @@ if __name__ == "__main__":
     file_type = args.file_type
     csv_file = args.csv_file
     filter_values = args.filter_values
-    filtered_file_name = args.filtered_file_name
 
-    filter_reviews = True
     if file_type == 'review':
         data = get_review_data(csv_file)
 
-        if filter_reviews:
+        if args.filtered_file_name:
+            filtered_file_name = args.filtered_file_name
             print "constructing filtered set"
             label, business_ids = construct_filtered_set(filter_values)
             if label == "business_id":
