@@ -112,7 +112,18 @@ class Preprocessor:
 
 
 if __name__ == "__main__":
-    csv_file = 'data/review.csv'
+    parser = argparse.ArgumentParser(
+            description='Preprocess CSV file and return featured reviews (X) and corresponding labels (Y).',
+            )
+
+    parser.add_argument(
+            'csv_file',
+            type=str,
+            help='The csv file to featurize.',
+            )
+
+    args = parser.parse_args()
+    csv_file = args.csv_file
     preprocess = Preprocessor(csv_file)
 
     preprocess.cleanup()
