@@ -163,7 +163,7 @@ if __name__ == '__main__':
             )
 
     parser.add_argument(
-            'filtered_txt_file',
+            '--filtered_txt_file',
             type=str,
             help='The text file to write out filtered data',
             )
@@ -181,16 +181,17 @@ if __name__ == '__main__':
     read_and_write_file(json_file, csv_file, column_names, delimiter='\t')
 
     ## Create filtered business id set and write it to a file ##
-    filtered_txt_file = args.filtered_txt_file
+    if args.filtered_txt_file:
+        filtered_txt_file = args.filtered_txt_file
 
-    target_column_name = "business_id"
-    scalar_filter_columns = ["state"]
-    scalar_filter_values = ["AZ"]
-    filter_categories = ["Restaurants"]
+        target_column_name = "business_id"
+        scalar_filter_columns = ["state"]
+        scalar_filter_values = ["AZ"]a
+        filter_categories = ["Restaurants"]
 
-    print "filtering businesses"
-    filtered_business_ids = create_filtered_set(json_file, target_column_name, scalar_filter_columns, scalar_filter_values, filter_categories)
-    print "number of filtered businesses:", len(filtered_business_ids)
+        print "filtering businesses"
+        filtered_business_ids = create_filtered_set(json_file, target_column_name, scalar_filter_columns, scalar_filter_values, filter_categories)
+        print "number of filtered businesses:", len(filtered_business_ids)
 
-    print "writing filtered business ids to text file"
-    write_txt_file(filtered_txt_file, "business_id", filtered_business_ids)
+        print "writing filtered business ids to text file"
+        write_txt_file(filtered_txt_file, "business_id", filtered_business_ids)
