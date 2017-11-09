@@ -78,7 +78,6 @@ def construct_filtered_set(txt_file_path):
     filtered_values = set()
     first_line = True
     with open(txt_file_path, 'r') as fin:
-        #while line = fin.readline():
         for line in fin:
             if first_line:
                 title = line.strip()
@@ -124,7 +123,7 @@ if __name__ == "__main__":
             help='The text files of values to filter reviews.',
             )
     parser.add_argument(
-            '--filtered_file_name',
+            'filtered_file_name',
             type=str,
             help='Filepath for csv file containing filtered reviews.',
             )
@@ -132,13 +131,13 @@ if __name__ == "__main__":
     args = parser.parse_args()
     file_type = args.file_type
     csv_file = args.csv_file
-    filter_values = args.filter_values
 
     if file_type == 'review':
         data = get_review_data(csv_file)
 
         if args.filtered_file_name:
             filtered_file_name = args.filtered_file_name
+            filter_values = args.filter_values
             print "constructing filtered set"
             label, business_ids = construct_filtered_set(filter_values)
             if label == "business_id":
