@@ -65,3 +65,14 @@ id_2
 ...
 ```
 If the given txt file does not start with "business_id", a new file won't be generated.
+
+## Splitting the Data into Train, Validation, and Test Sets.
+Once you have a filtered_reviews.csv file, you can call
+```
+python csv_splitter.py path_to_data_directory csv_file_name_no_suffix num_lines_to_split --percent_train=percent_train --percent_val=precent_val --percent_test=percent_test
+```
+For example, if there is a file called filtered_reviews.csv in a data/ directory and you want to use 100 lines split 50%-25%-25% for train-validation-test, you can call
+```
+python csv_splitter.py data/ filtered_reviews 100 --percent_train=0.5 --percent_val=0.25 --percent_test=0.25
+```
+This will create 3 new files, filtered_reviews_train.csv, filtered_reviews_val.csv, and filtered_reviews_test.csv in the data/ directory. Each of these new file will have the header from the input file and the relevant number of lines. So filtered_reviews_train.csv will have 50 lines, etc. The default split if you don't give those arguments is 60-20-20. You must put in all parameters if you are not using the default, and there is no checking to see if it adds up to 100%.
