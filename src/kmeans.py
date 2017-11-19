@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
 from preprocess import *
-from helpers import binary_classif_err
+from helpers import classif_err
 import pdb
 
 

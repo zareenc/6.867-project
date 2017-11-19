@@ -35,30 +35,30 @@ def logistic_regression(X_train, Y_train, X_val, Y_val, \
     print "weight vector:", w
     print "bias:", w_o
     pred_train = lr.predict(X_train)
-    err_train, acc_train = binary_classif_err(pred_train.reshape((n_train, 1)), Y_train)
+    err_train, acc_train = classif_err(pred_train.reshape((n_train, 1)), Y_train)
     print "Training accuracy: %f" % acc_train
     
     # validation 
     print "validation. . ."
     n_val, d = X_val.shape
     pred_val = lr.predict(X_val)
-    err_val, acc_val = binary_classif_err(pred_val.reshape((n_val, 1)), Y_val)
+    err_val, acc_val = classif_err(pred_val.reshape((n_val, 1)), Y_val)
     print "Validation accuracy: %f" % acc_val
 
     # testing
     print "testing. . ."
     n_test, d = X_test.shape
     pred_test = lr.predict(X_test)
-    err_test, acc_test = binary_classif_err(pred_test.reshape((n_test, 1)), Y_test)
+    err_test, acc_test = classif_err(pred_test.reshape((n_test, 1)), Y_test)
     print "Test accuracy: %f\n" % acc_test
 
     return (acc_train, acc_val, acc_test)
 
 if __name__ == "__main__":
-    train_csv_file = 'data/filtered_az_reviews_train.csv'
-    val_csv_file = 'data/filtered_az_reviews_val.csv'
-    test_csv_file = 'data/filtered_az_reviews_test.csv'
-    results_file = 'results/filtered_az_reviews_lr.txt'
+    train_csv_file = 'data/filtered_nv_reviews_train.csv'
+    val_csv_file = 'data/filtered_nv_reviews_val.csv'
+    test_csv_file = 'data/filtered_nv_reviews_test.csv'
+    results_file = 'results/filtered_nv_reviews_lr.txt'
 
     # clean up reviews
     print "cleaning up reviews"
