@@ -42,3 +42,14 @@ def write_results(results_file, params_list, results_list):
                 results_str += '%s: %s ' % (k, str(v))
             f.write(results_str + '\n')
             f.write('\n')
+
+'''
+Turns an (n,) numpy array into an (n, 1) numpy array
+
+Arguments:
+   arr: the original (n,) numpy array
+
+Returns arr as an (n, 1) numpy array, does not mutate arr
+'''
+def expand(arr):
+    return np.reshape(arr, (arr.shape[0], 1))
