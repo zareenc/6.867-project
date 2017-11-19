@@ -2,19 +2,19 @@ import numpy as np
 from sklearn.linear_model import perceptron
 #from sklearn.linear_model import SGDClassifier
 from preprocess import *
-from helpers import classif_err
+from helpers import classif_err, expand
 import pdb
 
 
 def train_perceptron(X_train, Y_train):
 	p = perceptron.Perceptron()
-	p.fit(X_train, Y_train)
+	p.fit(X_train, np.ravel(Y_train))
 	return p
 
 
 def get_perceptron_error(linear_model, X, Y):
 	n,d = X.shape
-	return classif_err(linear_model.predict(X).reshape((n, 1)), Y)
+	return classif_err(expand(linear_model.predict(X)), Y)
 
 
 if __name__ == "__main__":

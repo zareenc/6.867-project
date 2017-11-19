@@ -29,27 +29,27 @@ def logistic_regression(X_train, Y_train, X_val, Y_val, \
     # training
     print "training. . ."
     n_train, d = X_train.shape
-    lr.fit(X_train, Y_train.reshape(n_train,))
+    lr.fit(X_train, np.ravel(Y_train))
     w = lr.coef_
     w_o = lr.intercept_
     print "weight vector:", w
     print "bias:", w_o
     pred_train = lr.predict(X_train)
-    err_train, acc_train = classif_err(pred_train.reshape((n_train, 1)), Y_train)
+    err_train, acc_train = classif_err(expand(pred_train), Y_train)
     print "Training accuracy: %f" % acc_train
     
     # validation 
     print "validation. . ."
     n_val, d = X_val.shape
     pred_val = lr.predict(X_val)
-    err_val, acc_val = classif_err(pred_val.reshape((n_val, 1)), Y_val)
+    err_val, acc_val = classif_err(expand(pred_val), Y_val)
     print "Validation accuracy: %f" % acc_val
 
     # testing
     print "testing. . ."
     n_test, d = X_test.shape
     pred_test = lr.predict(X_test)
-    err_test, acc_test = classif_err(pred_test.reshape((n_test, 1)), Y_test)
+    err_test, acc_test = classif_err(expand(pred_test), Y_test)
     print "Test accuracy: %f\n" % acc_test
 
     return (acc_train, acc_val, acc_test)
