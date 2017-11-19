@@ -3,7 +3,7 @@ import pdb
 import argparse
 from sklearn import svm
 from preprocess import Preprocessor
-from helpers import binary_classif_err
+from helpers import classif_err
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -15,7 +15,7 @@ if __name__ == "__main__":
             help='Path to training data.',
             )
     parser.add_argument(
-            '--validation_data',
+            'validation_data',
             type=str,
             help='Path to validation data.',
             )
@@ -35,13 +35,12 @@ if __name__ == "__main__":
 
     num_train_examples = X_train.shape[0]
 
-    if args.validation_data:
-        print "Loading validation data"
-        training_preprocessor = Preprocessor(args.validation_data)
-        training_preprocessor.cleanup()
-        X_val, _, Y_val_binary = training_preprocessor.featurize(training_dictionary)
+    print "Loading validation data"
+    training_preprocessor = Preprocessor(args.validation_data)
+    training_preprocessor.cleanup()
+    X_val, _, Y_val_binary = training_preprocessor.featurize(training_dictionary)
 
-        num_val_examples = X_val.shape[0]
+    num_val_examples = X_val.shape[0]
 
     print "Loading testing data"
     testing_preprocessor = Preprocessor(args.test_data)
@@ -50,25 +49,50 @@ if __name__ == "__main__":
 
     num_test_examples = X_test.shape[0]
 
-    print "Running SVM"
+    print "Running RBF SVM"
     max_accuracy = 0
     best_C = 0
     for C in [0.01, 0.1, 1, 5, 10]: 
-        binary_classifier = svm.SVC(C=C)
-        binary_classifier.fit(X_train, np.ravel(Y_train_binary))
-        Y_predict = binary_classifier.predict(X_val)
-        val_errs, val_accuracy = binary_classif_err(Y_predict.reshape((num_val_examples, 1)), Y_val_binary.reshape((num_val_examples, 1)))
-        print "C =", C, ", validation errors:", val_errs, ", validation accuracy:", val_accuracy
-        if val_accuracy > max_accuracy:
-            max_accuracy = val_accuracy
-            best_C = C
+        for exp in range(-5, 6):
+            gamma = 2**exp
+            binary_classifier = svm.SVC(C=C, gamma=gamma)
+            binary_classifier.fit(X_train, np.ravel(Y_train_binary))
+            Y_predict = binary_classifier.predict(X_val)
+            val_errs, val_accuracy = classif_err(Y_predict.reshape((num_val_examples, 1)), Y_val_binary.reshape((num_val_examples, 1)))
+            print "C =", C, ", gamma =", gamma, ", validation errors:", val_errs, ", validation accuracy:", val_accuracy
+            if val_accuracy > max_accuracy:
+                max_accuracy = val_accuracy
+                best_C = C
+                best_gamma = gamma
+    
+    print "best C:", best_C, "best gamma:", best_gamma
 
-    print "best C:", best_C
+    # print "Running Linear SVM"
+    # max_accuracy = 0
+    # best_C = 0
+    # for C in [0.01, 0.1, 1, 5, 10]: 
+    #         binary_classifier = svm.SVC(C=C, kernel='linear')
+    #         binary_classifier.fit(X_train, np.ravel(Y_train_binary))
+    #         Y_predict = binary_classifier.predict(X_val)
+    #         val_errs, val_accuracy = classif_err(Y_predict.reshape((num_val_examples, 1)), Y_val_binary.reshape((num_val_examples, 1)))
+    #         print "C =", C, ", validation errors:", val_errs, ", validation accuracy:", val_accuracy
+    #         if val_accuracy > max_accuracy:
+    #             max_accuracy = val_accuracy
+    #             best_C = C
 
-    best_classifier = svm.SVC(best_C)
+    # print "best C:", best_C
+
+    best_classifier = svm.SVC(C=best_C, gamma=best_gamma)
+    # best_classifier = svm.SVC(C=best_C, kernel='linear')
+
+    Y_predict = binary_classifier.predict(X_train)
+    train_errs, train_accuracy = classif_err(Y_predict.reshape((Y_predict.shape[0], 1)), Y_train_binary.reshape((Y_predict.shape[0], 1)))
+    print "total training errors:", train_errs
+    print "total training accuracy", train_accuracy
+
     Y_predict = binary_classifier.predict(X_test)
 
-    test_errs, test_accuracy = binary_classif_err(Y_predict.reshape((num_test_examples, 1)), Y_test_binary.reshape((num_test_examples, 1)))
+    test_errs, test_accuracy = classif_err(Y_predict.reshape((num_test_examples, 1)), Y_test_binary.reshape((num_test_examples, 1)))
     print "total test errors:", test_errs
     print "total test accuracy:", test_accuracy
 

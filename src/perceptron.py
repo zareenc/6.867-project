@@ -1,9 +1,8 @@
 import numpy as np
-import matplotlib.pyplot as plt
 from sklearn.linear_model import perceptron
 #from sklearn.linear_model import SGDClassifier
 from preprocess import *
-from helpers import binary_classif_err
+from helpers import classif_err
 import pdb
 
 
@@ -15,8 +14,7 @@ def train_perceptron(X_train, Y_train):
 
 def get_perceptron_error(linear_model, X, Y):
 	n,d = X.shape
-	return binary_classif_err(linear_model.predict(X).reshape((n, 1)), Y)
-
+	return classif_err(linear_model.predict(X).reshape((n, 1)), Y)
 
 
 if __name__ == "__main__":
