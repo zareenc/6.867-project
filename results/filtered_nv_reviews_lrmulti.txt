@@ -1,0 +1,18 @@
+multi_class: True regularization: l2 scaling factor: 100.0 lambda: 0.01 
+train acc: 0.989983305509 val acc: 0.396984924623 test acc: 0.447236180905 
+
+multi_class: True regularization: l2 scaling factor: 100.0 lambda: 0.1 
+train acc: 0.989983305509 val acc: 0.386934673367 test acc: 0.462311557789 
+
+multi_class: True regularization: l2 scaling factor: 100.0 lambda: 0.5 
+train acc: 0.989983305509 val acc: 0.376884422111 test acc: 0.472361809045 
+
+multi_class: True regularization: l2 scaling factor: 100.0 lambda: 1.0 
+train acc: 0.984974958264 val acc: 0.371859296482 test acc: 0.492462311558 
+
+multi_class: True regularization: l2 scaling factor: 100.0 lambda: 5.0 
+train acc: 0.976627712855 val acc: 0.386934673367 test acc: 0.48743718593 
+
+multi_class: True regularization: l2 scaling factor: 100.0 lambda: 10.0 
+train acc: 0.956594323873 val acc: 0.412060301508 test acc: 0.477386934673 
+
