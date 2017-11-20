@@ -55,10 +55,44 @@ def logistic_regression(X_train, Y_train, X_val, Y_val, \
     return (acc_train, acc_val, acc_test)
 
 if __name__ == "__main__":
+    '''
+    Sample files to try:
     train_csv_file = 'data/filtered_nv_reviews_train.csv'
     val_csv_file = 'data/filtered_nv_reviews_val.csv'
     test_csv_file = 'data/filtered_nv_reviews_test.csv'
     results_file = 'results/filtered_nv_reviews_lr.txt'
+    '''
+
+    parser = argparse.ArgumentParser(
+            description='Logistic Regression',
+            )
+    parser.add_argument(
+            'train_file',
+            type=str,
+            help='csv file with training data',
+            )
+    parser.add_argument(
+            'val_file',
+            type=str,
+            help='csv file with validation data',
+            )
+    parser.add_argument(
+            'test_file',
+            type=str,
+            help='csv file with test data',
+            )
+    parser.add_argument(
+            'results_file',
+            type=str,
+            help='file to write results to',
+            )
+
+    # get arguments
+    args = parser.parse_args()
+    train_csv_file = args.train_file
+    val_csv_file = args.val_file
+    test_csv_file = args.test_file
+    results_file = args.results_file
 
     # clean up reviews
     print "cleaning up reviews"
@@ -101,5 +135,6 @@ if __name__ == "__main__":
             results_list.append(results_dict)
     
     write_results(results_file, params_list, results_list)
+    print "results written to %s\n" % results_file
     print "best parameters", params_best
     print "best results", results_best
