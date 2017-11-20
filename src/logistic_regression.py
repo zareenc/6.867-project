@@ -87,6 +87,13 @@ if __name__ == "__main__":
             help='csv file with test data',
             )
     parser.add_argument(
+            '--multi_class',
+            type=bool,
+            default=False,
+            required=False,
+            help='multiclass or binary classification',
+            )
+    parser.add_argument(
             'results_file',
             type=str,
             help='file to write results to',
@@ -98,7 +105,7 @@ if __name__ == "__main__":
     val_csv_file = args.val_file
     test_csv_file = args.test_file
     results_file = args.results_file
-    multi_class = True
+    multi_class = args.multi_class
 
     # clean up reviews
     print "cleaning up reviews"
