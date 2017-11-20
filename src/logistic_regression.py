@@ -13,7 +13,7 @@ Logistic regression
 Arguments
    X_*: ndarray with dimensions (n, d)
    Y_*: ndarray with dimensions (n, 1)
-   params: tuple of (lambda, scaling factor, regularization)
+   params: tuple of (lambda, scaling factor, regularization, multi_class)
 
 Return:
    tuple of (training accuracy, validation accuracy, test accuracy)
@@ -21,10 +21,15 @@ Return:
 def logistic_regression(X_train, Y_train, X_val, Y_val, \
                             X_test, Y_test, *params):
     # initialization
-    l, scaling, reg = params
+    l, scaling, reg, multi_class = params
     C = 1./l
     lr = LogisticRegression(solver='liblinear', penalty=reg, \
              fit_intercept=True, intercept_scaling=scaling, C=C)
+    if multi_class:
+        params = {'solver':'lbfgs', 'multi_class':'multinomial'}
+    else:
+        params = {'solver':'liblinear'}
+    lr.set_params(**params)
     
     # training
     print "training. . ."
@@ -93,6 +98,7 @@ if __name__ == "__main__":
     val_csv_file = args.val_file
     test_csv_file = args.test_file
     results_file = args.results_file
+    multi_class = True
 
     # clean up reviews
     print "cleaning up reviews"
@@ -110,22 +116,35 @@ if __name__ == "__main__":
     X_val, Y_val_multi, Y_val_binary = preprocessor_val.featurize(train_dict)
     X_test, Y_test_multi, Y_test_binary = preprocessor_test.featurize(train_dict)
 
+    # select binary or multiclass labels
+    if multi_class:
+        Y_train = Y_train_multi
+        Y_val = Y_val_multi
+        Y_test = Y_test_multi
+    else:
+        Y_train = Y_train_binary
+        Y_val = Y_val_binary
+        Y_test = Y_test_binary
+
     # run logistic regression
     lambdas = [0.01, 0.1, 0.5, 1., 5., 10.]
     scaling = 100.
-    regs = ['l1', 'l2']
+    if multi_class:
+        regs = ['l2']
+    else:
+        regs = ['l1', 'l2']
     params_list = []
     results_list = []
     params_best = {}
     results_best = {}
     for reg in regs:
         for l in lambdas:
-            params_dict = {'lambda':l, 'scaling factor':scaling, 'regularization':reg}
-            params = (l, scaling, reg)
+            params_dict = {'lambda':l, 'scaling factor':scaling, 'regularization':reg, 'multi_class':multi_class}
+            params = (l, scaling, reg, multi_class)
             acc_train, acc_val, acc_test = logistic_regression( \
-                                       X_train, Y_train_binary, \
-                                       X_val, Y_val_binary, \
-                                       X_test, Y_test_binary, *params)
+                                       X_train, Y_train, \
+                                       X_val, Y_val, \
+                                       X_test, Y_test, *params)
             results_dict = {'train acc':acc_train, 'val acc':acc_val, 'test acc':acc_test}
 
             if len(results_best) == 0 or acc_val > results_best['val acc']:
