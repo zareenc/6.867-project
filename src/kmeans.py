@@ -11,7 +11,7 @@ def train_kmeans(X_train):
 	kmeans.fit(X_train)
 	return kmeans
 
-def get_comparisons(predictions, labels_multi):
+def get_comparison_tuples(predictions, labels_multi):
 	compares = []
 	for i in range(len(labels_multi)):
 		compares.append((int(labels_multi[i]), predictions[i]))
@@ -56,15 +56,16 @@ def eval_accuracy(dict_compares, classes):
 			err_num += dict_compares[tup]
 
 	err_pct = err_num/(1.0*err_den)
+	acc_pct = 1.0 - err_pct
 
-	return err_pct
+	return err_pct, acc_pct
 
 
 if __name__ == "__main__":
 
-	train_csv = '../data/filtered_nv_reviews_train.csv'
-	val_csv = '../data/filtered_nv_reviews_val.csv'
-	test_csv = '../data/filtered_nv_reviews_test.csv'
+	train_csv = '../data/filtered_az_reviews_train.csv'
+	val_csv = '../data/filtered_az_reviews_val.csv'
+	test_csv = '../data/filtered_az_reviews_test.csv'
 
 	pre_train = Preprocessor(train_csv)
 	pre_val = Preprocessor(val_csv)
@@ -84,18 +85,24 @@ if __name__ == "__main__":
 	model = train_kmeans(X_TRAIN)
 
 	train_predictions = model.predict(X_TRAIN)
-	train_comps = get_comparisons(train_predictions, Y_TRAIN_MULTI)
+	train_comps = get_comparison_tuples(train_predictions, Y_TRAIN_MULTI)
 	train_dict = dict_compare_tuples(train_comps)
-	print "Training error: ", eval_accuracy(train_dict, 5)
+	err, acc = eval_accuracy(train_dict, 5)
+	print "Training error: ", err
+	print "Training accuracy: ", acc
 
 	val_predictions = model.predict(X_VAL)
-	val_comps = get_comparisons(val_predictions, Y_VAL_MULTI)
+	val_comps = get_comparison_tuples(val_predictions, Y_VAL_MULTI)
 	val_dict = dict_compare_tuples(val_comps)
-	print "Validation error: ", eval_accuracy(val_dict, 5)
+	err, acc = eval_accuracy(val_dict, 5)
+	print "Validation error: ", err
+	print "Validation accuracy: ", acc
 
 	test_predictions = model.predict(X_TEST)
-	test_comps = get_comparisons(test_predictions, Y_TEST_MULTI)
+	test_comps = get_comparison_tuples(test_predictions, Y_TEST_MULTI)
 	test_dict = dict_compare_tuples(test_comps)
-	print "Test error: ", eval_accuracy(test_dict, 5)
+	err, acc = eval_accuracy(test_dict, 5)
+	print "Test error: ", err
+	print "Test accuracy: ", acc
 
 
