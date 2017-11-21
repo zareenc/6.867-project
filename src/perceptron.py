@@ -31,30 +31,30 @@ if __name__ == "__main__":
 	'''
 
 	parser = argparse.ArgumentParser(
-            description='Perceptron',
-            )
-    parser.add_argument(
-            'train_file',
-            type=str,
-            help='csv file with training data',
-            )
-    parser.add_argument(
-            'val_file',
-            type=str,
-            help='csv file with validation data',
-            )
-    parser.add_argument(
-            'test_file',
-            type=str,
-            help='csv file with test data',
-            )
+			description='Perceptron',
+			)
+	parser.add_argument(
+			'train_file',
+			type=str,
+			help='csv file with training data',
+			)
+	parser.add_argument(
+			'val_file',
+			type=str,
+			help='csv file with validation data',
+			)
+	parser.add_argument(
+			'test_file',
+			type=str,
+			help='csv file with test data',
+			)
 
-    # get arguments
-    args = parser.parse_args()
+	# get arguments
+	args = parser.parse_args()
 
-    train_csv = args.train_file
-    val_csv = args.val_file
-    test_csv = args.test_file
+	train_csv = args.train_file
+	val_csv = args.val_file
+	test_csv = args.test_file
 
 	pre_train = Preprocessor(train_csv)
 	pre_val = Preprocessor(val_csv)
