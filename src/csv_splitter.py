@@ -52,7 +52,6 @@ def split(data_path, csv_file_name, total_num_lines, percent_train, percent_val,
         val_file.close()
         test_file.close()
 
-
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
             description='Split data into train, validation, and test sets.',

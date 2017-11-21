@@ -9,11 +9,11 @@ def get_review_data(csv_file):
                  'stars', 'date', 'useful', 'cool')
     filling = None
 
-    print "getting review data"
+    print("getting review data")
     data = genfromtxt(csv_file, dtype=None, names=names, \
                              delimiter='\t', skip_header=1, comments=None, \
                              filling_values=filling)
-    print "done getting review data"
+    print("done getting review data")
     return data
 
 def get_business_data(csv_file):
@@ -66,11 +66,11 @@ def get_business_data(csv_file):
         'attributes.OutdoorSeating');
     filling = None
 
-    print "getting business data"
+    print("getting business data")
     data = genfromtxt(csv_file, dtype=None, names=names, \
                              delimiter='\t', skip_header=1, comments=None, \
                              filling_values=filling)
-    print "done getting business data"
+    print("done getting business data")
     return data
 
 def construct_filtered_set(txt_file_path):
@@ -138,13 +138,13 @@ if __name__ == "__main__":
         if args.filtered_file_name:
             filtered_file_name = args.filtered_file_name
             filter_values = args.filter_values
-            print "constructing filtered set"
+            print("constructing filtered set")
             label, business_ids = construct_filtered_set(filter_values)
             if label == "business_id":
                 col_index = 4
-                print "getting filtered review data"
+                print("getting filtered review data")
                 filtered_data = get_filtered_review_data(data, col_index, business_ids)
-                print "writing filtered review data to csv file"
+                print("writing filtered review data to csv file")
                 write_reviews_to_csv_file(filtered_data, filtered_file_name)
 
     elif file_type == 'business':

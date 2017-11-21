@@ -141,26 +141,26 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(
             description='Run SVM.',
             )
-    # parser.add_argument(
-    #         'training_data',
-    #         type=str,
-    #         help='Path to training data.',
-    #         )
-    # parser.add_argument(
-    #         'validation_data',
-    #         type=str,
-    #         help='Path to validation data.',
-    #         )
-    # parser.add_argument(
-    #         'test_data',
-    #         type=str,
-    #         help='Path to test data.',
-    #         )
     parser.add_argument(
-            'pickle_file_path',
+            'training_data',
+            type=str,
+            help='Path to training data.',
+            )
+    parser.add_argument(
+            'validation_data',
+            type=str,
+            help='Path to validation data.',
+            )
+    parser.add_argument(
+            'test_data',
             type=str,
             help='Path to test data.',
             )
+    # parser.add_argument(
+    #         'pickle_file_path',
+    #         type=str,
+    #         help='Path to test data.',
+    #         )
     parser.add_argument(
             '--norun_bin_lin',
             action='store_true',
@@ -184,34 +184,30 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    # print "Loading training data"
-    # training_preprocessor = Preprocessor(args.training_data)
-    # training_preprocessor.cleanup()
-    # training_dictionary = training_preprocessor.get_dictionary()
-    # X_train, Y_train_multi, Y_train_binary = training_preprocessor.featurize(training_dictionary)
+    print("Loading training data")
+    training_preprocessor = Preprocessor(args.training_data)
+    training_preprocessor.cleanup()
+    training_dictionary = training_preprocessor.get_dictionary()
+    X_train, Y_train_multi, Y_train_binary = training_preprocessor.featurize(training_dictionary)
 
-    # del training_preprocessor
+    del training_preprocessor
 
-    # print "Loading validation data"
-    # validation_preprocessor = Preprocessor(args.validation_data)
-    # validation_preprocessor.cleanup()
-    # X_val, Y_val_multi, Y_val_binary = validation_preprocessor.featurize(training_dictionary)
+    print("Loading validation data")
+    validation_preprocessor = Preprocessor(args.validation_data)
+    validation_preprocessor.cleanup()
+    X_val, Y_val_multi, Y_val_binary = validation_preprocessor.featurize(training_dictionary)
 
-    # del validation_preprocessor
+    del validation_preprocessor
 
-    # print "Loading testing data"
-    # testing_preprocessor = Preprocessor(args.test_data)
-    # testing_preprocessor.cleanup()
-    # X_test, Y_test_multi, Y_test_binary = testing_preprocessor.featurize(training_dictionary)
+    print("Loading testing data")
+    testing_preprocessor = Preprocessor(args.test_data)
+    testing_preprocessor.cleanup()
+    X_test, Y_test_multi, Y_test_binary = testing_preprocessor.featurize(training_dictionary)
 
-    # del testing_preprocessor
-    # del training_dictionary
+    del testing_preprocessor
+    del training_dictionary
 
-    X_train, Y_train_multi, Y_train_binary, \
-        X_val, Y_val_multi, Y_val_binary, \
-        X_test, Y_test_multi, Y_test_binary = load_pickled_dataset(args.pickle_file_path)
-
-    pdb.set_trace()
+    # pdb.set_trace()
 
     Cees = [0.01, 0.1, 1, 5, 10]
     gammas = []
