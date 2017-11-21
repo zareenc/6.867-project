@@ -40,12 +40,12 @@ def eval_accuracy(dict_compares, classes):
 					best_pairs[i] = tup[1]
 				elif dict_compares[(i, tup[1])] > dict_compares[(i, best_pairs[i])]:
 					best_pairs[i] = tup[1]
-	#print "FINAL BEST PAIRS: ", best_pairs
+	print "FINAL BEST PAIRS: ", best_pairs
 	
 	best_pairs_set = set()
 	for pred in best_pairs:
 		best_pairs_set.add((pred, best_pairs[pred]))
-	#print "BEST PAIRS SET: ", best_pairs_set
+	print "BEST PAIRS SET: ", best_pairs_set
 
 	err_num = 0.0
 	err_den = 0.0
