@@ -82,7 +82,7 @@ class Preprocessor:
 
 
     """ featurized inputs X and labels Y """
-    def featurize(self, some_dictionary):
+    def featurize(self, some_dictionary, frequency=False):
         # X is feature matrix from the bag of words model
         # Y_multi is multi-class labels matrix
         l = len(some_dictionary)
@@ -98,7 +98,10 @@ class Preprocessor:
             if review_id in self.good_ids:
                 for token in self.tokens[review_id]:
                     if token in some_dictionary:
-                        X[i][some_dictionary[token]] = 1
+                        if frequency:
+                            X[i][some_dictionary[token]] += 1
+                        else:
+                            X[i][some_dictionary[token]] = 1
 
             Y_multi[i] = int(rating)
         
