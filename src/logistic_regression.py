@@ -94,6 +94,13 @@ if __name__ == "__main__":
             help='multiclass or binary classification',
             )
     parser.add_argument(
+            '--frequency',
+            type=bool,
+            default=False,
+            required=False,
+            help='use frequency of presence for bag of words',
+            )
+    parser.add_argument(
             'results_file',
             type=str,
             help='file to write results to',
@@ -106,6 +113,7 @@ if __name__ == "__main__":
     test_csv_file = args.test_file
     results_file = args.results_file
     multi_class = args.multi_class
+    frequency = args.frequency
 
     # clean up reviews
     print "cleaning up reviews"
@@ -119,9 +127,10 @@ if __name__ == "__main__":
     # featurize training, validation, test data
     print "featurizing training, validation, test data"
     train_dict = preprocessor_train.get_dictionary()
-    X_train, Y_train_multi, Y_train_binary = preprocessor_train.featurize(train_dict)
-    X_val, Y_val_multi, Y_val_binary = preprocessor_val.featurize(train_dict)
-    X_test, Y_test_multi, Y_test_binary = preprocessor_test.featurize(train_dict)
+    X_train, Y_train_multi, Y_train_binary = preprocessor_train.featurize(train_dict, frequency=frequency)
+    pdb.set_trace()
+    X_val, Y_val_multi, Y_val_binary = preprocessor_val.featurize(train_dict, frequency=frequency)
+    X_test, Y_test_multi, Y_test_binary = preprocessor_test.featurize(train_dict, frequency=frequency)
 
     # select binary or multiclass labels
     if multi_class:
