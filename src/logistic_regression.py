@@ -101,6 +101,13 @@ if __name__ == "__main__":
             help='use frequency of presence for bag of words',
             )
     parser.add_argument(
+            '--tf_idf',
+            type=bool,
+            default=False,
+            required=False,
+            help='use tf_idf normalization for bag of words featurization',
+            )
+    parser.add_argument(
             'results_file',
             type=str,
             help='file to write results to',
@@ -114,23 +121,23 @@ if __name__ == "__main__":
     results_file = args.results_file
     multi_class = args.multi_class
     frequency = args.frequency
+    tf_idf = args.tf_idf
 
     # clean up reviews
-    print "cleaning up reviews"
     preprocessor_train = Preprocessor(train_csv_file)
     preprocessor_val = Preprocessor(val_csv_file)
     preprocessor_test = Preprocessor(test_csv_file)
+    print "cleaning up reviews..."
     preprocessor_train.cleanup()
     preprocessor_val.cleanup()
     preprocessor_test.cleanup()
 
     # featurize training, validation, test data
-    print "featurizing training, validation, test data"
+    print "featurizing training, validation, test data..."
     train_dict = preprocessor_train.get_dictionary()
-    X_train, Y_train_multi, Y_train_binary = preprocessor_train.featurize(train_dict, frequency=frequency)
-    pdb.set_trace()
-    X_val, Y_val_multi, Y_val_binary = preprocessor_val.featurize(train_dict, frequency=frequency)
-    X_test, Y_test_multi, Y_test_binary = preprocessor_test.featurize(train_dict, frequency=frequency)
+    X_train, Y_train_multi, Y_train_binary = preprocessor_train.featurize(train_dict, frequency=frequency, tf_idf=tf_idf)
+    X_val, Y_val_multi, Y_val_binary = preprocessor_val.featurize(train_dict, frequency=frequency, tf_idf=tf_idf)
+    X_test, Y_test_multi, Y_test_binary = preprocessor_test.featurize(train_dict, frequency=frequency, tf_idf=tf_idf)
 
     # select binary or multiclass labels
     if multi_class:

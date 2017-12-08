@@ -2,6 +2,7 @@ import numpy as np
 import nltk
 import argparse
 import pdb
+from sklearn.feature_extraction.text import TfidfTransformer
 from get_yelp_data import get_review_data
 
 
@@ -82,7 +83,7 @@ class Preprocessor:
 
 
     """ featurized inputs X and labels Y """
-    def featurize(self, some_dictionary, frequency=False):
+    def featurize(self, some_dictionary, frequency=False, tf_idf=False):
         # X is feature matrix from the bag of words model
         # Y_multi is multi-class labels matrix
         l = len(some_dictionary)
@@ -104,6 +105,11 @@ class Preprocessor:
                             X[i][some_dictionary[token]] = 1
 
             Y_multi[i] = int(rating)
+
+        # normalize frequency counts in featurized inputs
+        if frequency and tf_idf:
+            tfidf_transformer = TfidfTransformer()
+            X = tfidf_transformer.fit_transform(X).toarray()
         
         # Y_binary is binary labels matrix
         # binary star ratings where 1-2 is -1 and 3-5 is +1
