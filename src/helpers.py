@@ -1,4 +1,48 @@
 import numpy as np
+import argparse
+
+''' Generic parser for classifiers '''
+def ClassificationParser():
+    parser = argparse.ArgumentParser(
+            description='Classification Parser',
+            )
+    parser.add_argument(
+            'train_file',
+            type=str,
+            help='csv file with training data',
+            )
+    parser.add_argument(
+            'val_file',
+            type=str,
+            help='csv file with validation data',
+            )
+    parser.add_argument(
+            'test_file',
+            type=str,
+            help='csv file with test data',
+            )
+    parser.add_argument(
+            '--multi_class',
+            type=bool,
+            default=False,
+            required=False,
+            help='multiclass or binary classification',
+            )
+    parser.add_argument(
+            '--frequency',
+            type=bool,
+            default=False,
+            required=False,
+            help='use frequency of presence for bag of words featurization',
+            )
+    parser.add_argument(
+            '--tf_idf',
+            type=bool,
+            default=False,
+            required=False,
+            help='use tf_idf normalization for bag of words featurization',
+            )
+    return parser
 
 '''
 Return number of classification errors

@@ -1,7 +1,7 @@
 import numpy as np
 from sklearn.linear_model import perceptron
 from preprocess import *
-from helpers import classif_err, expand
+from helpers import *
 import pdb
 
 
@@ -30,26 +30,8 @@ if __name__ == "__main__":
 	test: filtered_az_reviews_test.csv
 	'''
 
-	parser = argparse.ArgumentParser(
-			description='Perceptron',
-			)
-	parser.add_argument(
-			'train_file',
-			type=str,
-			help='csv file with training data',
-			)
-	parser.add_argument(
-			'val_file',
-			type=str,
-			help='csv file with validation data',
-			)
-	parser.add_argument(
-			'test_file',
-			type=str,
-			help='csv file with test data',
-			)
-
 	# get arguments
+	parser = ClassificationParser()
 	args = parser.parse_args()
 
 	train_csv = args.train_file
