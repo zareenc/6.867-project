@@ -64,8 +64,6 @@ if __name__ == "__main__":
     del testing_preprocessor
     del training_dictionary
 
-    pdb.set_trace()
-
     save = {
         'X_train': X_train,
         'Y_train_multi': Y_train_multi,

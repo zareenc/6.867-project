@@ -111,6 +111,7 @@ class Preprocessor:
         # Y_binary is binary labels matrix
         # binary star ratings where 1-2 is -1 and 3-5 is +1
         Y_binary = np.where((Y_multi > 2), 1, -1)
+        # Y_binary = np.where((Y_multi > 3), 1, -1)
 
         return (X, Y_multi, Y_binary)
 
