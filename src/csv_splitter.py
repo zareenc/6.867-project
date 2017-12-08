@@ -1,6 +1,59 @@
 import csv
 import argparse
 
+def get_even_data(input_csv_file, output_csv_file, num_classes, num_each_class, delimiter='\t'):
+    if (not num_classes == 2) and (not num_classes == 5):
+        print("Number of classes must be 2 or 5. Not processing data.")
+        return
+
+    num_binary_classes = 2
+    positive_threshold = 3
+    positive_review_index = 0
+    negative_review_index = 1
+
+    num_multi_classes = 5
+
+    output_file = open(output_csv_file, 'wb+')
+    output_writer = csv.writer(output_file, delimiter=delimiter)
+
+    review_rating_index = 5
+
+    class_counts = [0] * num_classes
+
+
+    with open(input_csv_file, 'r') as fin:
+        # Read in the column names from the input file
+        col_names = fin.readline().strip().split(delimiter)
+        output_writer.writerow(col_names)
+
+        have_even_data = False
+        for line in fin:
+            row = line.strip().split(delimiter)
+            rating = int(row[review_rating_index])
+
+            if num_classes == num_binary_classes:
+                if rating >= positive_threshold and class_counts[positive_review_index] < num_each_class:
+                    class_counts[positive_review_index] += 1
+                    output_writer.writerow(row)
+                elif rating < positive_threshold and class_counts[negative_review_index] < num_each_class:
+                    class_counts[negative_review_index] += 1
+                    output_writer.writerow(row)
+            elif num_classes == num_multi_classes:
+                if class_counts[rating-1] < num_each_class:
+                    class_counts[rating-1] += 1
+                    output_writer.writerow(row)
+
+            for class_count in class_counts:
+                if class_count < num_each_class:
+                    have_even_data = False
+                    break
+                have_even_data = True
+            if have_even_data:
+                break
+
+        print(class_counts)
+
+
 def split(data_path, csv_file_name, total_num_lines, percent_train, percent_val, percent_test, delimiter='\t'):
     input_file_name = data_path + csv_file_name + '.csv'
     train_file_name = data_path + csv_file_name + '_train.csv'
@@ -53,57 +106,64 @@ def split(data_path, csv_file_name, total_num_lines, percent_train, percent_val,
         test_file.close()
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(
-            description='Split data into train, validation, and test sets.',
-            )
-    parser.add_argument(
-            'data_path',
-            type=str,
-            help='Directory of the data file',
-            )
-    parser.add_argument(
-            'csv_file_name',
-            type=str,
-            help='The name csv file to split WITHOUT the .csv suffix.',
-            )
-    parser.add_argument(
-            'total_num_lines',
-            type=int,
-            help='The total number of lines in the input file to split up',
-            )
-    parser.add_argument(
-            '--percent_train',
-            type=float,
-            help='The percentage of the lines to split into training data as a decimal, \
-                    so 50%% should be entered as 0.5',
-            )
-    parser.add_argument(
-            '--percent_val',
-            type=float,
-            help='The percentage of the lines to split into validation data as a decimal, \
-                    so 50%% should be entered as 0.5',
-            )
-    parser.add_argument(
-            '--percent_test',
-            type=float,
-            help='The percentage of the lines to split into test data as a decimal, \
-                    so 50%% should be entered as 0.5',
-            )
+    input_csv_file = "../data/filtered_az_reviews.csv"
+    output_csv_file = "../test_even_data.csv"
+    num_classes = 5
+    num_each_class = 10
 
-    args = parser.parse_args()
-    data_path = args.data_path
-    csv_file_name = args.csv_file_name
-    total_num_lines = args.total_num_lines
+    get_even_data(input_csv_file, output_csv_file, num_classes, num_each_class)
 
-    percent_train = 0.6
-    percent_val = 0.2
-    percent_test = 0.2
+    # parser = argparse.ArgumentParser(
+    #         description='Split data into train, validation, and test sets.',
+    #         )
+    # parser.add_argument(
+    #         'data_path',
+    #         type=str,
+    #         help='Directory of the data file',
+    #         )
+    # parser.add_argument(
+    #         'csv_file_name',
+    #         type=str,
+    #         help='The name csv file to split WITHOUT the .csv suffix.',
+    #         )
+    # parser.add_argument(
+    #         'total_num_lines',
+    #         type=int,
+    #         help='The total number of lines in the input file to split up',
+    #         )
+    # parser.add_argument(
+    #         '--percent_train',
+    #         type=float,
+    #         help='The percentage of the lines to split into training data as a decimal, \
+    #                 so 50%% should be entered as 0.5',
+    #         )
+    # parser.add_argument(
+    #         '--percent_val',
+    #         type=float,
+    #         help='The percentage of the lines to split into validation data as a decimal, \
+    #                 so 50%% should be entered as 0.5',
+    #         )
+    # parser.add_argument(
+    #         '--percent_test',
+    #         type=float,
+    #         help='The percentage of the lines to split into test data as a decimal, \
+    #                 so 50%% should be entered as 0.5',
+    #         )
 
-    if args.percent_train:
-        percent_train = args.percent_train
-    if args.percent_val:
-        percent_val = args.percent_val
-    if args.percent_test:
-        percent_test = args.percent_test
+    # args = parser.parse_args()
+    # data_path = args.data_path
+    # csv_file_name = args.csv_file_name
+    # total_num_lines = args.total_num_lines
 
-    split(data_path, csv_file_name, total_num_lines, percent_train, percent_val, percent_test)
+    # percent_train = 0.6
+    # percent_val = 0.2
+    # percent_test = 0.2
+
+    # if args.percent_train:
+    #     percent_train = args.percent_train
+    # if args.percent_val:
+    #     percent_val = args.percent_val
+    # if args.percent_test:
+    #     percent_test = args.percent_test
+
+    # split(data_path, csv_file_name, total_num_lines, percent_train, percent_val, percent_test)
