@@ -68,45 +68,8 @@ if __name__ == "__main__":
     results_file = 'results/filtered_nv_reviews_lr.txt'
     '''
 
-    parser = argparse.ArgumentParser(
-            description='Logistic Regression',
-            )
-    parser.add_argument(
-            'train_file',
-            type=str,
-            help='csv file with training data',
-            )
-    parser.add_argument(
-            'val_file',
-            type=str,
-            help='csv file with validation data',
-            )
-    parser.add_argument(
-            'test_file',
-            type=str,
-            help='csv file with test data',
-            )
-    parser.add_argument(
-            '--multi_class',
-            type=bool,
-            default=False,
-            required=False,
-            help='multiclass or binary classification',
-            )
-    parser.add_argument(
-            '--frequency',
-            type=bool,
-            default=False,
-            required=False,
-            help='use frequency of presence for bag of words',
-            )
-    parser.add_argument(
-            '--tf_idf',
-            type=bool,
-            default=False,
-            required=False,
-            help='use tf_idf normalization for bag of words featurization',
-            )
+    # parser of command line args
+    parser = ClassificationParser()
     parser.add_argument(
             'results_file',
             type=str,
