@@ -73,17 +73,17 @@ def write_results(results_file, params_list, results_list):
     assert len(params_list) == len(results_list)
 
     with open(results_file, 'a') as f:
-        for i in xrange(len(params_list)):
+        for i in range(len(params_list)):
             results = results_list[i]
             params = params_list[i]
 
             params_str = ''
-            for k, v in params.iteritems():
+            for k, v in params.items():
                 params_str += '%s: %s ' % (k, str(v))
             f.write(params_str + '\n')
         
             results_str = ''
-            for k, v in results.iteritems():
+            for k, v in results.items():
                 results_str += '%s: %s ' % (k, str(v))
             f.write(results_str + '\n')
             f.write('\n')
