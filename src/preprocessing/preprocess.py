@@ -16,24 +16,25 @@ class Preprocessor:
     def __init__(self, csv_file, verbose=False):
         self.review_data = get_review_data(csv_file)
         self.n, = self.review_data.shape
-        self.d = None   # later set to dictionary size
+        self.d = None   # later set to words dictionary size
         self.verbose = verbose
 
         self.errors = 0
         self.good_ids = set()
         self.tokens = {}
         self.pos = {}
-        self.dictionary = {}
+        self.words_dictionary = {}
+        self.city_dictionary = {}
 
 
     """Clean up reviews from csv file and . """
-    def cleanup(self, lower=True, remove_stopwords=True, stem=True):
+    def cleanup(self, lower=True, remove_stopwords=True, stem=True, use_city=False):
         # clean up by tokenizing and tagging parts of speech
         for i in xrange(self.n):
 
-            row = self.review_data[i]
-            review = row['text']
-            review_id = row['review_id']
+            review_row = self.review_data[i]
+            review = review_row['text']
+            review_id = review_row['review_id']
             
             try:
                 # separates words from punctuation
@@ -57,10 +58,10 @@ class Preprocessor:
                     stemmed_tokens = [stemmer.stem(token) for token in current_tokens]
                     self.tokens[review_id] = [token for token in stemmed_tokens]
 
-                # adds unique tokens to dictionary
+                # adds unique tokens to words dictionary
                 for token in self.tokens[review_id]:
-                    if token not in self.dictionary:
-                        self.dictionary[token] = len(self.dictionary)
+                    if token not in self.words_dictionary:
+                        self.words_dictionary[token] = len(self.words_dictionary)
 
                 # tag part of speech or punctuation for each separated item
                 self.pos[review_id] = nltk.pos_tag(self.tokens[review_id])
@@ -73,36 +74,55 @@ class Preprocessor:
                 if self.verbose:
                     print "Couldn't tokenize review", review_id
 
-        self.d = len(self.dictionary)
+        self.d = len(self.words_dictionary)
+
+        # loop over again, using only good ids
+        for i in xrange(self.n):
+
+            review_row = self.review_data[i]
+            review_id = review_row['review_id']
+            business_id = review_row['business_id']
+
+            current_feature_vector_length
+
+            if use_city:
+                city = self.business_data[business_id]['city']
+                if city not in self.city_dictionary:
+                    self.city_dictionary[city] = len(self.city_dictionary) + self.d
+
+
         if self.verbose:
             print "total reviews: %d" % self.n
             print "total errors: %d" % self.errors
-            print "dictionary size: %d" % self.d
+            print "words dictionary size: %d" % self.d
+            print "Other features:"
+            print "city dictionary size: %d" % len(self.city_dictionary)
 
         return
 
 
     """ featurized inputs X and labels Y """
-    def featurize(self, some_dictionary, frequency=False, tf_idf=False):
+    def featurize(self, words_dict, frequency=False, tf_idf=False):
         # X is feature matrix from the bag of words model
         # Y_multi is multi-class labels matrix
-        l = len(some_dictionary)
+        l = len(words_dict)
         X = np.zeros((self.n, l))
         Y_multi = np.zeros((self.n, 1))
 
         for i in xrange(self.n):
 
-            row = self.review_data[i]
-            review_id = row['review_id']
-            rating = row['stars']
+            review_row = self.review_data[i]
+            review_id = review_row['review_id']
+            rating = review_row['stars']
+            business_id = review_row['business_id']
 
             if review_id in self.good_ids:
                 for token in self.tokens[review_id]:
-                    if token in some_dictionary:
+                    if token in words_dict:
                         if frequency:
-                            X[i][some_dictionary[token]] += 1
+                            X[i][words_dict[token]] += 1
                         else:
-                            X[i][some_dictionary[token]] = 1
+                            X[i][words_dict[token]] = 1
 
             Y_multi[i] = int(rating)
 
@@ -111,6 +131,14 @@ class Preprocessor:
             tfidf_transformer = TfidfTransformer()
             X = tfidf_transformer.fit_transform(X).toarray()
         
+        # concatenate other features below, if flags set
+
+        # include city data
+        if len(city_dictionary) > 0:
+            city = self.business_data[business_id]['city']
+
+        # include other data...
+
         # Y_binary is binary labels matrix
         # binary star ratings where 1-2 is -1 and 3-5 is +1
         Y_binary = np.where((Y_multi > 2), 1, -1)
@@ -118,9 +146,14 @@ class Preprocessor:
         return (X, Y_multi, Y_binary)
 
 
-    """ return the dictionary obtained from preprocessing """
-    def get_dictionary(self):
-        return self.dictionary
+    """ return the words dictionary obtained from preprocessing """
+    def get_words_dictionary(self):
+        return self.words_dictionary
+
+
+    """ return the words dictionary obtained from preprocessing """
+    def get_city_dictionary(self):
+        return self.city_dictionary
 
 
 if __name__ == "__main__":
@@ -139,7 +172,7 @@ if __name__ == "__main__":
     preprocess = Preprocessor(csv_file)
 
     preprocess.cleanup()
-    dic = preprocess.get_dictionary()
+    dic = preprocess.get_words_dictionary()
     X, Y_m, Y_b = preprocess.featurize(dic)
 
     print "X (feature matrix) is: ", X
