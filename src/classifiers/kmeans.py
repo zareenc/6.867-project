@@ -1,10 +1,12 @@
+import sys, os
+sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/../preprocessing')
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
 import statistics
-from preprocess import *
-from helpers import *
 import pdb
+from helpers import *
+from preprocess import *
 
 
 def train_kmeans(X_train):

@@ -1,10 +1,12 @@
+import sys, os
+sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/../preprocessing')
 import numpy as np
 import argparse
 import pdb
 from sklearn.linear_model import LogisticRegression
+from helpers import *
 from get_yelp_data import get_review_data
 from preprocess import *
-from helpers import *
 
 
 '''
