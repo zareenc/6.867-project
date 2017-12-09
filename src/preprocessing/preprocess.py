@@ -131,7 +131,7 @@ class Preprocessor:
 
 
     """ featurized inputs X and labels Y """
-    def featurize(self, words_dict, frequency=False, tf_idf=False, feature_attributes_to_use=[]):
+    def featurize(self, words_dict, multiclass=False, frequency=False, tf_idf=False, feature_attributes_to_use=[]):
         # X is feature matrix from the bag of words model
         # Y_multi is multi-class labels matrix
         l = len(words_dict)
@@ -204,7 +204,10 @@ class Preprocessor:
         Y_binary = np.where((Y_multi > 2), 1, -1)
         # Y_binary = np.where((Y_multi > 3), 1, -1)
 
-        return (X, Y_multi, Y_binary)
+        if multiclass:
+            return (X, Y_multi)
+            
+        return (X, Y_binary)
 
 
     """ return the words dictionary obtained from preprocessing """
