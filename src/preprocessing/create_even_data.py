@@ -53,7 +53,7 @@ def get_even_data(input_csv_file, output_csv_file, num_classes, num_each_class, 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
-            description='Split data into train, validation, and test sets.',
+            description='Create evenly distributed data sets.',
             )
     parser.add_argument(
             'input_csv_file_path',
