@@ -73,6 +73,10 @@ def get_business_data(csv_file):
     print "done getting business data"
     return data
 
+def get_filtered_business_data(business_data, filter_column_index, filtered_value_set):
+    # TODO
+    return business_data
+
 def construct_filtered_set(txt_file_path):
     title = ""
     filtered_values = set()
