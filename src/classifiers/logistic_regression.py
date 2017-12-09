@@ -34,30 +34,30 @@ def logistic_regression(X_train, Y_train, X_val, Y_val, \
     lr.set_params(**params)
     
     # training
-    print "training. . ."
+    print("training. . .")
     n_train, d = X_train.shape
     lr.fit(X_train, np.ravel(Y_train))
     w = lr.coef_
     w_o = lr.intercept_
-    print "weight vector:", w
-    print "bias:", w_o
+    print("weight vector:", w)
+    print("bias:", w_o)
     pred_train = lr.predict(X_train)
     err_train, acc_train = classif_err(expand(pred_train), Y_train)
-    print "Training accuracy: %f" % acc_train
+    print("Training accuracy: %f" % acc_train)
     
     # validation 
-    print "validation. . ."
+    print("validation. . .")
     n_val, d = X_val.shape
     pred_val = lr.predict(X_val)
     err_val, acc_val = classif_err(expand(pred_val), Y_val)
-    print "Validation accuracy: %f" % acc_val
+    print("Validation accuracy: %f" % acc_val)
 
     # testing
-    print "testing. . ."
+    print("testing. . .")
     n_test, d = X_test.shape
     pred_test = lr.predict(X_test)
     err_test, acc_test = classif_err(expand(pred_test), Y_test)
-    print "Test accuracy: %f\n" % acc_test
+    print("Test accuracy: %f\n" % acc_test)
 
     return (acc_train, acc_val, acc_test)
 
@@ -92,13 +92,13 @@ if __name__ == "__main__":
     preprocessor_train = Preprocessor(train_csv_file)
     preprocessor_val = Preprocessor(val_csv_file)
     preprocessor_test = Preprocessor(test_csv_file)
-    print "cleaning up reviews..."
+    print("cleaning up reviews...")
     preprocessor_train.cleanup()
     preprocessor_val.cleanup()
     preprocessor_test.cleanup()
 
     # featurize training, validation, test data
-    print "featurizing training, validation, test data..."
+    print("featurizing training, validation, test data...")
     train_dict = preprocessor_train.get_dictionary()
     X_train, Y_train_multi, Y_train_binary = preprocessor_train.featurize(train_dict, frequency=frequency, tf_idf=tf_idf)
     X_val, Y_val_multi, Y_val_binary = preprocessor_val.featurize(train_dict, frequency=frequency, tf_idf=tf_idf)
@@ -142,6 +142,6 @@ if __name__ == "__main__":
             results_list.append(results_dict)
     
     write_results(results_file, params_list, results_list)
-    print "results written to %s\n" % results_file
-    print "best parameters", params_best
-    print "best results", results_best
+    print("results written to %s\n" % results_file)
+    print("best parameters", params_best)
+    print("best results", results_best)
