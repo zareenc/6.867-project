@@ -115,7 +115,8 @@ class Preprocessor:
                 self.errors += 1
                 if self.verbose:
                     print("Couldn't tokenize review", review_id)
-        del row
+        
+        del review_row
         del review
         del review_id
 
@@ -193,11 +194,6 @@ class Preprocessor:
         del business_id
 
         print("final X matrix is: ", X)
-
-        # delete these variables when done
-        del review_row
-        del review_id
-        del rating
 
         # Y_binary is binary labels matrix
         # binary star ratings where 1-2 is -1 and 3-5 is +1
