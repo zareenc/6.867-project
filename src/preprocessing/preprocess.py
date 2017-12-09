@@ -32,13 +32,13 @@ class Preprocessor:
     Can optionally give a text file of business id's to filter with.
     """  
     def make_business_dict(self, business_csv_file, business_filter_file=''):
-        if len(business_csv_file) == 0:
+        if len(business_csv_file) == 0:     # FIX THIS - breaks on the default
             return {}, {}
 
         # get business data
         print('making dictionary of businesses...')
         business_data = get_business_data(business_csv_file)
-        if len(business_filter_file) > 0:
+        if len(business_filter_file) > 0:   # FIX THIS - breaks on the default
             label, bus_ids = construct_filtered_set(business_filter_file)
             business_data = get_filtered_business_data(business_data, 'business_id', bus_ids)
 
@@ -132,7 +132,7 @@ class Preprocessor:
 
 
     """ featurized inputs X and labels Y """
-    def featurize(self, words_dict, multiclass=False, frequency=False, tf_idf=False, feature_attributes_to_use=[]):
+    def featurize(self, words_dict, multiclass, frequency=False, tf_idf=False, feature_attributes_to_use=[]):
         # X is feature matrix from the bag of words model
         # Y_multi is multi-class labels matrix
         l = len(words_dict)
@@ -236,6 +236,8 @@ if __name__ == "__main__":
     review_csv_file = args.review_csv_file
     business_csv_file = args.business_csv_file
     business_filter_file = args.business_filter_file
+    multi_class = True
+
     preprocess = Preprocessor(review_csv_file, business_csv_file, business_filter_file)
 
     print('cleaning up reviews...')
@@ -243,7 +245,7 @@ if __name__ == "__main__":
     print('making words dictionary...')
     dic = preprocess.get_words_dictionary()
     print('featurizing reviews...')
-    X, Y = preprocess.featurize(dic)
+    X, Y = preprocess.featurize(dic, multi_class)
 
     print("X (feature matrix) is: ", X)
     print("Y (labels) is: ", Y)
