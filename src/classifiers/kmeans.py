@@ -131,7 +131,7 @@ if __name__ == "__main__":
 	pre_test = Preprocessor(test_csv)
 
 	pre_train.cleanup()
-	dict_train = pre_train.get_dictionary()
+	dict_train = pre_train.get_words_dictionary()
 	X_TRAIN, Y_TRAIN_MULTI, Y_TRAIN_BINARY = pre_train.featurize(dict_train)
 
 	pre_val.cleanup()

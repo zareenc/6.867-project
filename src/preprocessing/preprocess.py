@@ -143,7 +143,7 @@ class Preprocessor:
 
             review_row = self.review_data[i]
             review_id = review_row['review_id'].decode("utf-8")
-            rating = review_row['stars'].decode("utf-8")
+            rating = review_row['stars']
 
             if review_id in self.good_ids:
                 for token in self.tokens[review_id]:
@@ -184,14 +184,14 @@ class Preprocessor:
                         option = self.business_data[business_id][attribute]
                         Xnew[i][option_list.index(option)] = 1
                             
-            # concatenate this
-            X = np.hstack((X, Xnew))
-            print("new X matrix is: ", X)
+                # concatenate this
+                X = np.hstack((X, Xnew))
+                print("new X matrix is: ", X)
 
         # delete these variables when done
-        del review_row
-        del review_id
-        del business_id
+        # del review_row
+        # del review_id
+        # del business_id
 
         print("final X matrix is: ", X)
 
