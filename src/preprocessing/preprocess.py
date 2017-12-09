@@ -3,7 +3,7 @@ import nltk
 import argparse
 import pdb
 from sklearn.feature_extraction.text import TfidfTransformer
-from get_yelp_data import get_review_data
+from get_yelp_data import get_review_data, get_business_data, get_filtered_business_data
 
 
 class Preprocessor:
@@ -11,10 +11,12 @@ class Preprocessor:
 
     REM_PUNC = ['.', ',']
     STOPWORDS = set(nltk.corpus.stopwords.words('english'))
+    ATTRIBUTE_NAMES = ['city']
 
 
-    def __init__(self, csv_file, verbose=False):
-        self.review_data = get_review_data(csv_file)
+    def __init__(self, review_csv_file, business_csv_file='', business_filter_file='', verbose=False):
+        self.review_data = get_review_data(review_csv_file)
+        self.business_data, self.attributes = self.make_business_dict(business_csv_file, business_filter_file)
         self.n, = self.review_data.shape
         self.d = None   # later set to dictionary size
         self.verbose = verbose
@@ -24,6 +26,41 @@ class Preprocessor:
         self.tokens = {}
         self.pos = {}
         self.dictionary = {}
+
+
+    """
+    Make dictionary of business id's to business information.
+    Can optionally give a text file of business id's to filter with.
+    """  
+    def make_business_dict(self, business_csv_file, business_filter_file=''):
+        print('making dictionary of businesses...')
+        business_data = get_business_data(business_csv_file)
+
+        # initialize attributes dict
+        attributes = {}
+        for a_name in self.ATTRIBUTE_NAMES:
+            attributes[a_name] = []
+
+        # populate business and attributes dicts
+        business_dict = {}
+        for row in business_data:
+            business_dict[row['business_id']] = row
+            for a_name in self.ATTRIBUTE_NAMES:
+                a = row[a_name].title()
+                if a not in attributes[a_name]:
+                    attributes[a_name].append(a)
+
+        return business_dict, attributes
+
+
+    """Setter for business dictionary"""
+    def set_business_dict(self, business_dict):
+        self.business_dict = business_dict
+
+
+    """Setter for attributes"""
+    def set_attributes(self, attributes):
+        self.attributes = attributes
 
 
     """Clean up reviews from csv file and . """
@@ -136,17 +173,32 @@ if __name__ == "__main__":
             )
 
     parser.add_argument(
-            'csv_file',
+            'review_csv_file',
             type=str,
-            help='The csv file to featurize.',
+            help='The review csv file to featurize.',
+            )
+    parser.add_argument(
+            '--business_csv_file',
+            type=str,
+            help='The business csv file.',
+            )
+    parser.add_argument(
+            '--business_filter_file',
+            type=str,
+            help='Text file of business id\'s to filter business with.',
             )
 
     args = parser.parse_args()
-    csv_file = args.csv_file
-    preprocess = Preprocessor(csv_file)
+    review_csv_file = args.review_csv_file
+    business_csv_file = args.business_csv_file
+    business_filter_file = args.business_filter_file
+    preprocess = Preprocessor(review_csv_file, business_csv_file, business_filter_file)
 
+    print('cleaning up reviews...')
     preprocess.cleanup()
+    print('making dictionary...')
     dic = preprocess.get_dictionary()
+    print('featurizing reviews...')
     X, Y_m, Y_b = preprocess.featurize(dic)
 
     print("X (feature matrix) is: ", X)
