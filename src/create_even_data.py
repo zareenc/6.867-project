@@ -51,8 +51,6 @@ def get_even_data(input_csv_file, output_csv_file, num_classes, num_each_class, 
             if have_even_data:
                 break
 
-        print(class_counts)
-
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
             description='Split data into train, validation, and test sets.',

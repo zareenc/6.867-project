@@ -128,7 +128,7 @@ def multiclass_rbf_svm(Cees, gammas, X_train, Y_train_multi, X_val, Y_val_multi,
     Y_predict = best_classifier.predict(X_train)
     train_errs, train_accuracy = classif_err(expand(Y_predict), expand(Y_train_multi))
     print("total training errors:", train_errs)
-    print("total training accuracy", train_accuracy)
+    print("total training accuracy:", train_accuracy)
 
     Y_predict = best_classifier.predict(X_test)
 
