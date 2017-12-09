@@ -173,16 +173,16 @@ class Preprocessor:
                 # this is new feature vector that will be concatenated
                 Xnew = np.zeros(self.n, option_list_len)
 
-                    for i in range(self.n):
-                        review_row = self.review_data[i]
-                        review_id = review_row['review_id'].decode("utf-8")
-                        business_id = review_row['business_id'].decode("utf-8")
-
-                        if review_id in self.good_ids:
-                            option_list = self.attributes[attribute]
-                            option = self.business_data[business_id][attribute]
-                            Xnew[i][option_list.index(option)] = 1
-
+                for i in range(self.n):
+                    review_row = self.review_data[i]
+                    review_id = review_row['review_id'].decode("utf-8")
+                    business_id = review_row['business_id'].decode("utf-8")
+                        
+                    if review_id in self.good_ids:
+                        option_list = self.attributes[attribute]
+                        option = self.business_data[business_id][attribute]
+                        Xnew[i][option_list.index(option)] = 1
+                            
             # concatenate this
             X = np.hstack((X, Xnew))
             print("new X matrix is: ", X)
