@@ -18,14 +18,13 @@ class Preprocessor:
         self.review_data = get_review_data(review_csv_file)
         self.business_data, self.attributes = self.make_business_dict(business_csv_file, business_filter_file)
         self.n, = self.review_data.shape
-        self.d = None   # later set to dictionary size
         self.verbose = verbose
 
         self.errors = 0
         self.good_ids = set()
         self.tokens = {}
         self.pos = {}
-        self.dictionary = {}
+        self.words_dictionary = {}
 
 
     """
@@ -70,13 +69,13 @@ class Preprocessor:
 
 
     """Clean up reviews from csv file and . """
-    def cleanup(self, lower=True, remove_stopwords=True, stem=True):
+    def cleanup(self, lower=True, remove_stopwords=True, stem=True, modify_words_dictionary=False):
         # clean up by tokenizing and tagging parts of speech
         for i in range(self.n):
 
-            row = self.review_data[i]
-            review = row['text'].decode("utf-8")
-            review_id = row['review_id'].decode("utf-8")
+            review_row = self.review_data[i]
+            review = review_row['text'].decode("utf-8")
+            review_id = review_row['review_id'].decode("utf-8")
 
             try:
                 # separates words from punctuation
@@ -100,10 +99,11 @@ class Preprocessor:
                     stemmed_tokens = [stemmer.stem(token) for token in current_tokens]
                     self.tokens[review_id] = [token for token in stemmed_tokens]
 
-                # adds unique tokens to dictionary
-                for token in self.tokens[review_id]:
-                    if token not in self.dictionary:
-                        self.dictionary[token] = len(self.dictionary)
+                # adds unique tokens to words dictionary
+                if modify_words_dictionary:
+                    for token in self.tokens[review_id]:
+                        if token not in self.words_dictionary:
+                            self.words_dictionary[token] = len(self.words_dictionary)
 
                 # tag part of speech or punctuation for each separated item
                 self.pos[review_id] = nltk.pos_tag(self.tokens[review_id])
@@ -119,58 +119,100 @@ class Preprocessor:
         del review
         del review_id
 
-        self.d = len(self.dictionary)
         if self.verbose:
             print("total reviews: %d" % self.n)
             print("total errors: %d" % self.errors)
-            print("dictionary size: %d" % self.d)
+            print("dictionary size: %d" % len(self.words_dictionary))
+            print("Other features:")
+            for attribute in self.attributes:
+                print(str(attribute) + " size: %d" % len(self.attributes[attribute]))
 
         return
 
 
     """ featurized inputs X and labels Y """
-    def featurize(self, some_dictionary, frequency=False, tf_idf=False):
+    def featurize(self, words_dict, multiclass=False, frequency=False, tf_idf=False, feature_attributes_to_use=[]):
         # X is feature matrix from the bag of words model
         # Y_multi is multi-class labels matrix
-        l = len(some_dictionary)
+        l = len(words_dict)
         X = np.zeros((self.n, l))
         Y_multi = np.zeros((self.n, 1))
 
         for i in range(self.n):
 
-            row = self.review_data[i]
-            review_id = row['review_id']
-            rating = row['stars']
+            review_row = self.review_data[i]
+            review_id = review_row['review_id'].decode("utf-8")
+            rating = review_row['stars'].decode("utf-8")
 
             if review_id in self.good_ids:
                 for token in self.tokens[review_id]:
-                    if token in some_dictionary:
+                    if token in words_dict:
                         if frequency:
-                            X[i][some_dictionary[token]] += 1
+                            X[i][words_dict[token]] += 1
                         else:
-                            X[i][some_dictionary[token]] = 1
+                            X[i][words_dict[token]] = 1
 
             Y_multi[i] = int(rating)
+
+        # delete these variables when done
+        del review_row
+        del review_id
+        del rating
 
         # normalize frequency counts in featurized inputs
         if frequency and tf_idf:
             tfidf_transformer = TfidfTransformer()
             X = tfidf_transformer.fit_transform(X).toarray()
-        
-        del row
+
+            
+        # include other attributes in feature vector
+        for attribute in self.attributes.keys(): 
+            if str(attribute) in feature_attributes_to_use:
+                option_list_len = len(self.attributes[attribute])
+
+                # this is new feature vector that will be concatenated
+                Xnew = np.zeros(self.n, option_list_len)
+
+                    for i in range(self.n):
+                        review_row = self.review_data[i]
+                        review_id = review_row['review_id'].decode("utf-8")
+                        business_id = review_row['business_id'].decode("utf-8")
+
+                        if review_id in self.good_ids:
+                            option_list = self.attributes[attribute]
+                            option = self.business_data[business_id][attribute]
+                            Xnew[i][option_list.index(option)] = 1
+
+            # concatenate this
+            X = np.hstack((X, Xnew))
+            print("new X matrix is: ", X)
+
+        # delete these variables when done
+        del review_row
+        del review_id
+        del business_id
+
+        print("final X matrix is: ", X)
+
+        # delete these variables when done
+        del review_row
         del review_id
         del rating
+
         # Y_binary is binary labels matrix
         # binary star ratings where 1-2 is -1 and 3-5 is +1
         Y_binary = np.where((Y_multi > 2), 1, -1)
         # Y_binary = np.where((Y_multi > 3), 1, -1)
 
-        return (X, Y_multi, Y_binary)
+        if multiclass:
+            return (X, Y_multi)
+
+        return (X, Y_binary)
 
 
-    """ return the dictionary obtained from preprocessing """
-    def get_dictionary(self):
-        return self.dictionary
+    """ return the words dictionary obtained from preprocessing """
+    def get_words_dictionary(self):
+        return self.words_dictionary
 
 
 if __name__ == "__main__":
@@ -202,12 +244,11 @@ if __name__ == "__main__":
 
     print('cleaning up reviews...')
     preprocess.cleanup()
-    print('making dictionary...')
-    dic = preprocess.get_dictionary()
+    print('making words dictionary...')
+    dic = preprocess.get_words_dictionary()
     print('featurizing reviews...')
-    X, Y_m, Y_b = preprocess.featurize(dic)
+    X, Y = preprocess.featurize(dic)
 
     print("X (feature matrix) is: ", X)
-    print("Y_m (multi-class labels) is: ", Y_m)
-    print("Y_b (binary labels) is: ", Y_b)
+    print("Y (labels) is: ", Y)
 
