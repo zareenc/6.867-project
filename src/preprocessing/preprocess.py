@@ -3,7 +3,7 @@ import nltk
 import argparse
 import pdb
 from sklearn.feature_extraction.text import TfidfTransformer
-from get_yelp_data import get_review_data, get_business_data, get_filtered_business_data
+from get_yelp_data import *
 
 
 class Preprocessor:
@@ -36,11 +36,12 @@ class Preprocessor:
         if len(business_csv_file) == 0:
             return {}, {}
 
+        # get business data
         print('making dictionary of businesses...')
         business_data = get_business_data(business_csv_file)
         if len(business_filter_file) > 0:
             label, bus_ids = construct_filtered_set(business_filter_file)
-            business_data = get_filtered_business_data(business_data, BUSINESS_BUSID_IDX, bus_ids)
+            business_data = get_filtered_business_data(business_data, 'business_id', bus_ids)
 
         # initialize attributes dict
         attributes = {}
@@ -55,7 +56,6 @@ class Preprocessor:
                 a = row[a_name].title()
                 if a not in attributes[a_name]:
                     attributes[a_name].append(a)
-
         return business_dict, attributes
 
 

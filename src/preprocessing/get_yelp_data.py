@@ -79,10 +79,6 @@ def get_business_data(csv_file):
     print("done getting business data")
     return data
 
-def get_filtered_business_data(business_data, filter_column_index, filtered_value_set):
-    # TODO
-    return business_data
-
 def construct_filtered_set(txt_file_path):
     title = ""
     filtered_values = set()
@@ -95,6 +91,13 @@ def construct_filtered_set(txt_file_path):
             else:
                 filtered_values.add(line.strip())
     return title, filtered_values
+
+def get_filtered_business_data(business_data, column_name, filtered_value_set):
+    filtered_businesses = []
+    for business in business_data:
+        if business[column_name].decode('utf-8') in filtered_value_set:
+            filtered_businesses.append(business)
+    return filtered_businesses
 
 def get_filtered_review_data(review_data, filter_column_index, filtered_value_set):
     filtered_reviews = []
