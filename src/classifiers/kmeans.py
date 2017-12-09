@@ -27,7 +27,7 @@ def dict_compare_tuples(compares):
 			dict_compares[compares[i]] = 1
 		else:
 			dict_compares[compares[i]] += 1
-	print "dict compares is: ", dict_compares
+	print("dict compares is:", dict_compares)
 	return dict_compares
 
 def kmeans_stats(compares):
@@ -50,21 +50,21 @@ def kmeans_stats(compares):
 		try:
 			mean[i] = statistics.mean(listoflists[i])
 		except:
-			print "list missing data points"
+			print("list missing data points")
 		try:
 			stdev[i] = statistics.stdev(listoflists[i])
 		except:
-			print "list missing data points"
+			print("list missing data points")
 		try:
 			median[i] = statistics.median(listoflists[i])
 		except:
-			print "list missing data points"
+			print("list missing data points")
 		try:
 			mode[i] = statistics.mode(listoflists[i])
 		except:
-			print "list missing data points"
+			print("list missing data points")
 	
-	print listoflists
+	print(listoflists)
 	return mean, stdev, median, mode
 
 '''Not sure if this is a valid way to consider k-means accuracy'''
@@ -72,7 +72,7 @@ def eval_accuracy(dict_compares, classes):
 	best_pairs = {}
 	for i in range(1, classes+1):
 		best_pairs[i] = 2*classes
-	print "best pairs initialized to: ", best_pairs
+	print("best pairs initialized to: ", best_pairs)
 
 	for i in range(1, classes+1):
 		for tup in dict_compares:
@@ -81,12 +81,12 @@ def eval_accuracy(dict_compares, classes):
 					best_pairs[i] = tup[1]
 				elif dict_compares[(i, tup[1])] > dict_compares[(i, best_pairs[i])]:
 					best_pairs[i] = tup[1]
-	print "FINAL BEST PAIRS: ", best_pairs
+	print("FINAL BEST PAIRS: ", best_pairs)
 	
 	best_pairs_set = set()
 	for pred in best_pairs:
 		best_pairs_set.add((pred, best_pairs[pred]))
-	print "BEST PAIRS SET: ", best_pairs_set
+	print("BEST PAIRS SET: ", best_pairs_set)
 
 	err_num = 0.0
 	err_den = 0.0
@@ -146,37 +146,37 @@ if __name__ == "__main__":
 	train_predictions = model.predict(X_TRAIN)
 	train_comps = get_comparison_tuples(train_predictions, Y_TRAIN_MULTI)
 	tr_mean, tr_stdev, tr_median, tr_mode = kmeans_stats(train_comps)
-	print "Training cluster mean: ", tr_mean
-	print "Training cluster standard deviation: ", tr_stdev
-	print "Training cluster median: ", tr_median
-	print "Training cluster mode: ", tr_mode
+	print("Training cluster mean: ", tr_mean)
+	print("Training cluster standard deviation: ", tr_stdev)
+	print("Training cluster median: ", tr_median)
+	print("Training cluster mode: ", tr_mode)
 	train_dict = dict_compare_tuples(train_comps)
 	err, acc = eval_accuracy(train_dict, 5)
-	print "Training error: ", err
-	print "Training accuracy: ", acc
+	print("Training error: ", err)
+	print("Training accuracy: ", acc)
 
 	val_predictions = model.predict(X_VAL)
 	val_comps = get_comparison_tuples(val_predictions, Y_VAL_MULTI)
 	v_mean, v_stdev, v_median, v_mode = kmeans_stats(val_comps)
-	print "Validation assignment mean: ", v_mean
-	print "Validation assignment standard deviation: ", v_stdev
-	print "Validation assignment median: ", v_median
-	print "Validation assignment mode: ", v_mode
+	print("Validation assignment mean: ", v_mean)
+	print("Validation assignment standard deviation: ", v_stdev)
+	print("Validation assignment median: ", v_median)
+	print("Validation assignment mode: ", v_mode)
 	val_dict = dict_compare_tuples(val_comps)
 	err, acc = eval_accuracy(val_dict, 5)
-	print "Validation error: ", err
-	print "Validation accuracy: ", acc
+	print("Validation error: ", err)
+	print("Validation accuracy: ", acc)
 
 	test_predictions = model.predict(X_TEST)
 	test_comps = get_comparison_tuples(test_predictions, Y_TEST_MULTI)
 	te_mean, te_stdev, te_median, te_mode = kmeans_stats(test_comps)
-	print "Test assignment mean: ", te_mean
-	print "Test assignment standard deviation: ", te_stdev
-	print "Test assignment median: ", te_median
-	print "Test assignment mode: ", te_mode
+	print("Test assignment mean: ", te_mean)
+	print("Test assignment standard deviation: ", te_stdev)
+	print("Test assignment median: ", te_median)
+	print("Test assignment mode: ", te_mode)
 	test_dict = dict_compare_tuples(test_comps)
 	err, acc = eval_accuracy(test_dict, 5)
-	print "Test error: ", err
-	print "Test accuracy: ", acc
+	print("Test error: ", err)
+	print("Test accuracy: ", acc)
 
 
