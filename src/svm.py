@@ -28,7 +28,7 @@ def binary_linear_svm(Cees, X_train, Y_train_binary, X_val, Y_val_binary, X_test
     Y_predict = best_classifier.predict(X_train)
     train_errs, train_accuracy = classif_err(expand(Y_predict), expand(Y_train_binary))
     print("total training errors:", train_errs)
-    print("total training accuracy", train_accuracy)
+    print("total training accuracy:", train_accuracy)
 
     Y_predict = best_classifier.predict(X_test)
 
@@ -62,7 +62,7 @@ def binary_rbf_svm(Cees, gammas, X_train, Y_train_binary, X_val, Y_val_binary, X
     Y_predict = best_classifier.predict(X_train)
     train_errs, train_accuracy = classif_err(expand(Y_predict), expand(Y_train_binary))
     print("total training errors:", train_errs)
-    print("total training accuracy", train_accuracy)
+    print("total training accuracy:", train_accuracy)
 
     Y_predict = best_classifier.predict(X_test)
 
@@ -93,7 +93,7 @@ def multiclass_linear_svm(Cees, X_train, Y_train_multi, X_val, Y_val_multi, X_te
     Y_predict = best_classifier.predict(X_train)
     train_errs, train_accuracy = classif_err(expand(Y_predict), expand(Y_train_multi))
     print("total training errors:", train_errs)
-    print("total training accuracy", train_accuracy)
+    print("total training accuracy:", train_accuracy)
 
     Y_predict = best_classifier.predict(X_test)
 
