@@ -1,8 +1,11 @@
 # 6.867 Final Project
 
 ## Requirements
-- Python 2.7
-- Numpy
+* Python 3
+- Python packages:
+   - `numpy`
+   - `scikit-learn`
+   - `statistics`
 - NLTK packages:
 ```
 $ sudo pip install -U nltk
@@ -13,30 +16,7 @@ $ python
 > nltk.download('stopwords')
 ```
 
-## Examples
-Load review data:
-```
-from get_yelp_data import *
-data = get_review_data('../data/review.csv')
-```
-
-Get features and labels from review data:
-```
-from preprocess import *
-
-# training data
-preprocessor_train = Preprocessor('../data/review_train.csv')
-preprocessor_train.cleanup()
-dict = preprocessor_train.get_dictionary()
-X_train, Y_train_multi, Y_train_binary = preprocessor_train.featurize(dict)
-
-# test data
-preprocessor_test = Preprocessor('../data/review_test.csv')
-preprocessor_test.cleanup()
-X_test, Y_test_multi, Y_test_binary = preprocessor_test.featurize(dict)
-```
-
-## Parsing the Original JSON Data
+## Parsing JSON Data
 In order to convert one of the original JSON files from the dataset into a csv file, run
 ```
 python json_to_csv_converter.py path_to_json_file path_to_new_csv_file
@@ -52,7 +32,7 @@ This will generate a list of IDs according to the criteria in json_to_csv_conver
 
 To filter by single-valued field, the name of the field and desired value must be in the `scalar_filter_columns` and `scalar_filter_values` lists at the same index. To filter by a category, add the exact category name to the `filter_categories` list. These filtering criteria can be run in any order.
 
-## Filtering the CSV Data
+## Filtering CSV Data
 In order to filter a generated review.csv file by any filter categories, call
 ```
 python get_yelp_data.py review path_to_review_csv path_to_filter_txt path_to_new_csv_file
@@ -66,7 +46,7 @@ id_2
 ```
 If the given txt file does not start with "business_id", a new file won't be generated.
 
-## Splitting the Data into Train, Validation, and Test Sets.
+## Splitting Data into Train, Validation, and Test Sets
 Once you have a filtered_reviews.csv file, you can call
 ```
 python csv_splitter.py path_to_data_directory csv_file_name_no_suffix num_lines_to_split --percent_train=percent_train --percent_val=precent_val --percent_test=percent_test
@@ -76,3 +56,63 @@ For example, if there is a file called filtered_reviews.csv in a data/ directory
 python csv_splitter.py data/ filtered_reviews 100 --percent_train=0.5 --percent_val=0.25 --percent_test=0.25
 ```
 This will create 3 new files, filtered_reviews_train.csv, filtered_reviews_val.csv, and filtered_reviews_test.csv in the data/ directory. Each of these new file will have the header from the input file and the relevant number of lines. So filtered_reviews_train.csv will have 50 lines, etc. The default split if you don't give those arguments is 60-20-20. You must put in all parameters if you are not using the default, and there is no checking to see if it adds up to 100%.
+
+## Featurizing Data
+When you have your filtered training, validation, and test csv files, you can featurize the inputs and generate both binary and multiclass labels for the data as follows:
+```
+from preprocess import *
+
+# training data
+preprocessor_train = Preprocessor('../data/review_train.csv')
+preprocessor_train.cleanup()
+dict = preprocessor_train.get_dictionary()
+X_train, Y_train_multi, Y_train_binary = preprocessor_train.featurize(dict)
+
+# test data
+preprocessor_test = Preprocessor('../data/review_test.csv')
+preprocessor_test.cleanup()
+X_test, Y_test_multi, Y_test_binary = preprocessor_test.featurize(dict)
+```
+
+## Classifiers
+Below are examples of calling the various classification methods provided on the training, validation, and test data.
+
+### Perceptron
+```
+python perceptron.py train_data.csv val_data.csv test_data.csv
+```
+
+### Logistic Regression
+Binary classification:
+```
+python logistic_regression.py train_data.csv val_data.csv test_data.csv
+```
+
+Multiclass classification:
+```
+python logistic_regression.py train_data.csv val_data.csv test_data.csv --multi_class=True
+```
+
+### SVM
+By default, SVM runs both binary and multiclass classification with linear and RBF kernels:
+```
+python svm.py train_data.csv val_data.csv test_data.csv
+```
+
+Specific kernels or types of classification can be turned off by setting any combination of the following flags:
+```
+--norun_bin_lin            Don't run binary classification with linear kernel
+--norun_bin_rbf            Don't run binary classification with RBF kernel
+--norun_multi_lin          Don't run multiclass classification with linear kernel
+--norun_multi_lin          Don't run multiclass classification with RBF kernel
+```
+
+For example, you can run only binary classification as follows:
+```
+python svm.py train_data.csv val_data.csv test_data.csv --norun_multi_lin --norun_multi_lin
+```
+
+### K Means
+```
+python kmeans.py train_data.csv val_data.csv test_data.csv
+```
