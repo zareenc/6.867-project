@@ -122,7 +122,7 @@ class Preprocessor:
         if self.verbose:
             print("total reviews: %d" % self.n)
             print("total errors: %d" % self.errors)
-            print("dictionary size: %d" % len(self.words_dictionary)
+            print("dictionary size: %d" % len(self.words_dictionary))
             print("Other features:")
             for attribute in self.attributes:
                 print(str(attribute) + " size: %d" % len(self.attributes[attribute]))
@@ -206,7 +206,7 @@ class Preprocessor:
 
         if multiclass:
             return (X, Y_multi)
-            
+
         return (X, Y_binary)
 
 
@@ -247,9 +247,8 @@ if __name__ == "__main__":
     print('making words dictionary...')
     dic = preprocess.get_words_dictionary()
     print('featurizing reviews...')
-    X, Y_m, Y_b = preprocess.featurize(dic)
+    X, Y = preprocess.featurize(dic)
 
     print("X (feature matrix) is: ", X)
-    print("Y_m (multi-class labels) is: ", Y_m)
-    print("Y_b (binary labels) is: ", Y_b)
+    print("Y (labels) is: ", Y)
 
