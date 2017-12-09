@@ -30,12 +30,12 @@ class Preprocessor:
     """Clean up reviews from csv file and . """
     def cleanup(self, lower=True, remove_stopwords=True, stem=True, use_city=False):
         # clean up by tokenizing and tagging parts of speech
-        for i in xrange(self.n):
+        for i in range(self.n):
 
             review_row = self.review_data[i]
-            review = review_row['text']
-            review_id = review_row['review_id']
-            
+            review = review_row['text'].decode("utf-8")
+            review_id = review_row['review_id'].decode("utf-8")
+
             try:
                 # separates words from punctuation
                 separated = nltk.word_tokenize(review)
@@ -72,7 +72,10 @@ class Preprocessor:
             except:
                 self.errors += 1
                 if self.verbose:
-                    print "Couldn't tokenize review", review_id
+                    print("Couldn't tokenize review", review_id)
+        del row
+        del review
+        del review_id
 
         self.d = len(self.words_dictionary)
 
@@ -92,11 +95,11 @@ class Preprocessor:
 
 
         if self.verbose:
-            print "total reviews: %d" % self.n
-            print "total errors: %d" % self.errors
-            print "words dictionary size: %d" % self.d
-            print "Other features:"
-            print "city dictionary size: %d" % len(self.city_dictionary)
+            print("total reviews: %d" % self.n)
+            print("total errors: %d" % self.errors)
+            print("dictionary size: %d" % self.d)
+            print("Other features:")
+            print("city dictionary size: %d" % len(self.city_dictionary))
 
         return
 
@@ -109,7 +112,7 @@ class Preprocessor:
         X = np.zeros((self.n, l))
         Y_multi = np.zeros((self.n, 1))
 
-        for i in xrange(self.n):
+        for i in range(self.n):
 
             review_row = self.review_data[i]
             review_id = review_row['review_id']
@@ -133,15 +136,21 @@ class Preprocessor:
         
         # concatenate other features below, if flags set
 
-        # include city data
+        # include city data in feature vector
         if len(city_dictionary) > 0:
             city = self.business_data[business_id]['city']
 
         # include other data...
 
+        # delete these variables when done
+        del review_row
+        del review_id
+        del rating
+
         # Y_binary is binary labels matrix
         # binary star ratings where 1-2 is -1 and 3-5 is +1
         Y_binary = np.where((Y_multi > 2), 1, -1)
+        # Y_binary = np.where((Y_multi > 3), 1, -1)
 
         return (X, Y_multi, Y_binary)
 
@@ -175,7 +184,7 @@ if __name__ == "__main__":
     dic = preprocess.get_words_dictionary()
     X, Y_m, Y_b = preprocess.featurize(dic)
 
-    print "X (feature matrix) is: ", X
-    print "Y_m (multi-class labels) is: ", Y_m
-    print "Y_b (binary labels) is: ", Y_b
+    print("X (feature matrix) is: ", X)
+    print("Y_m (multi-class labels) is: ", Y_m)
+    print("Y_b (binary labels) is: ", Y_b)
 

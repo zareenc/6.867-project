@@ -58,20 +58,20 @@ if __name__ == "__main__":
 	model = train_perceptron(X_TRAIN, Y_TRAIN_BINARY)
 	w = model.coef_
 	w0 = model.intercept_
-	print "w is ", w
-	print "w0 is ", w0
+	print("w is ", w)
+	print("w0 is ", w0)
 
 	err_val, acc_val = get_perceptron_error(model, X_TRAIN, Y_TRAIN_BINARY)
-	print "training errors: ", err_val
-	print "training accuracy: ", acc_val
+	print("training errors: ", err_val)
+	print("training accuracy: ", acc_val)
 
 	# validation
 	err_val, acc_val = get_perceptron_error(model, X_VAL, Y_VAL_BINARY)
-	print "validation errors: ", err_val
-	print "validation accuracy: ", acc_val
+	print("validation errors: ", err_val)
+	print("validation accuracy: ", acc_val)
 
 	# test
 	err_val, acc_val = get_perceptron_error(model, X_TEST, Y_TEST_BINARY)
-	print "test errors: ", err_val
-	print "test accuracy: ", acc_val
+	print("test errors: ", err_val)
+	print("test accuracy: ", acc_val)
 

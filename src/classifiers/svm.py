@@ -4,12 +4,13 @@ import numpy as np
 import pdb
 import argparse
 from sklearn import svm
+from six.moves import cPickle as pickle
 from preprocess import Preprocessor
 from helpers import *
 
 def binary_linear_svm(Cees, X_train, Y_train_binary, X_val, Y_val_binary, X_test, Y_test_binary):
     print
-    print "Running Binary Linear SVM"
+    print("Running Binary Linear SVM")
     max_accuracy = 0
     best_C = 0
     best_classifier = None
@@ -18,30 +19,30 @@ def binary_linear_svm(Cees, X_train, Y_train_binary, X_val, Y_val_binary, X_test
             binary_classifier.fit(X_train, np.ravel(Y_train_binary))
             Y_predict = binary_classifier.predict(X_val)
             val_errs, val_accuracy = classif_err(expand(Y_predict), expand(Y_val_binary))
-            print "C =", C, ", validation errors:", val_errs, ", validation accuracy:", val_accuracy
+            print("C =", C, ", validation errors:", val_errs, ", validation accuracy:", val_accuracy)
             if val_accuracy > max_accuracy:
                 max_accuracy = val_accuracy
                 best_C = C
                 best_classifier = binary_classifier
 
-    print "best C:", best_C
+    print("best C:", best_C)
 
     Y_predict = best_classifier.predict(X_train)
     train_errs, train_accuracy = classif_err(expand(Y_predict), expand(Y_train_binary))
-    print "total training errors:", train_errs
-    print "total training accuracy", train_accuracy
+    print("total training errors:", train_errs)
+    print("total training accuracy:", train_accuracy)
 
     Y_predict = best_classifier.predict(X_test)
 
     test_errs, test_accuracy = classif_err(expand(Y_predict), expand(Y_test_binary))
-    print "total test errors:", test_errs
-    print "total test accuracy:", test_accuracy
+    print("total test errors:", test_errs)
+    print("total test accuracy:", test_accuracy)
     print
 
 
 def binary_rbf_svm(Cees, gammas, X_train, Y_train_binary, X_val, Y_val_binary, X_test, Y_test_binary):
-    print
-    print "Running Binary RBF SVM"
+    print("")
+    print("Running Binary RBF SVM")
     max_accuracy = 0
     best_C = 0
     best_classifier = None
@@ -51,30 +52,30 @@ def binary_rbf_svm(Cees, gammas, X_train, Y_train_binary, X_val, Y_val_binary, X
             binary_classifier.fit(X_train, np.ravel(Y_train_binary))
             Y_predict = binary_classifier.predict(X_val)
             val_errs, val_accuracy = classif_err(expand(Y_predict), expand(Y_val_binary))
-            print "C =", C, ", gamma =", gamma, ", validation errors:", val_errs, ", validation accuracy:", val_accuracy
+            print("C =", C, ", gamma =", gamma, ", validation errors:", val_errs, ", validation accuracy:", val_accuracy)
             if val_accuracy > max_accuracy:
                 max_accuracy = val_accuracy
                 best_C = C
                 best_gamma = gamma
                 best_classifier = binary_classifier
 
-    print "best C:", best_C, ", best gamma:", best_gamma
+    print("best C:", best_C, ", best gamma:", best_gamma)
 
     Y_predict = best_classifier.predict(X_train)
     train_errs, train_accuracy = classif_err(expand(Y_predict), expand(Y_train_binary))
-    print "total training errors:", train_errs
-    print "total training accuracy", train_accuracy
+    print("total training errors:", train_errs)
+    print("total training accuracy:", train_accuracy)
 
     Y_predict = best_classifier.predict(X_test)
 
     test_errs, test_accuracy = classif_err(expand(Y_predict), expand(Y_test_binary))
-    print "total test errors:", test_errs
-    print "total test accuracy:", test_accuracy
-    print
+    print("total test errors:", test_errs)
+    print("total test accuracy:", test_accuracy)
+    print("")
 
 def multiclass_linear_svm(Cees, X_train, Y_train_multi, X_val, Y_val_multi, X_test, Y_test_multi):
-    print
-    print "Running Multiclass Linear SVM"
+    print("")
+    print("Running Multiclass Linear SVM")
     max_accuracy = 0
     best_C = 0
     best_classifier = None
@@ -83,30 +84,30 @@ def multiclass_linear_svm(Cees, X_train, Y_train_multi, X_val, Y_val_multi, X_te
             classifier.fit(X_train, np.ravel(Y_train_multi))
             Y_predict = classifier.predict(X_val)
             val_errs, val_accuracy = classif_err(expand(Y_predict), expand(Y_val_multi))
-            print "C =", C, ", validation errors:", val_errs, ", validation accuracy:", val_accuracy
+            print("C =", C, ", validation errors:", val_errs, ", validation accuracy:", val_accuracy)
             if val_accuracy > max_accuracy:
                 max_accuracy = val_accuracy
                 best_C = C
                 best_classifier = classifier
 
-    print "best C:", best_C
+    print("best C:", best_C)
 
     Y_predict = best_classifier.predict(X_train)
     train_errs, train_accuracy = classif_err(expand(Y_predict), expand(Y_train_multi))
-    print "total training errors:", train_errs
-    print "total training accuracy", train_accuracy
+    print("total training errors:", train_errs)
+    print("total training accuracy:", train_accuracy)
 
     Y_predict = best_classifier.predict(X_test)
 
     test_errs, test_accuracy = classif_err(expand(Y_predict), expand(Y_test_multi))
-    print "total test errors:", test_errs
-    print "total test accuracy:", test_accuracy
-    print
+    print("total test errors:", test_errs)
+    print("total test accuracy:", test_accuracy)
+    print("")
 
 
 def multiclass_rbf_svm(Cees, gammas, X_train, Y_train_multi, X_val, Y_val_multi, X_test, Y_test_multi):
-    print
-    print "Running Multiclass RBF SVM"
+    print("")
+    print("Running Multiclass RBF SVM")
     max_accuracy = 0
     best_C = 0
     best_gamma = 0
@@ -117,30 +118,30 @@ def multiclass_rbf_svm(Cees, gammas, X_train, Y_train_multi, X_val, Y_val_multi,
             classifier.fit(X_train, np.ravel(Y_train_multi))
             Y_predict = classifier.predict(X_val)
             val_errs, val_accuracy = classif_err(expand(Y_predict), expand(Y_val_multi))
-            print "C =", C, ", gamma =", gamma, ", validation errors:", val_errs, ", validation accuracy:", val_accuracy
+            print("C =", C, ", gamma =", gamma, ", validation errors:", val_errs, ", validation accuracy:", val_accuracy)
             if val_accuracy > max_accuracy:
                 max_accuracy = val_accuracy
                 best_C = C
                 best_gamma = gamma
                 best_classifier = classifier
 
-    print "best C:", best_C, ", best gamma:", best_gamma
+    print("best C:", best_C, ", best gamma:", best_gamma)
 
     Y_predict = best_classifier.predict(X_train)
     train_errs, train_accuracy = classif_err(expand(Y_predict), expand(Y_train_multi))
-    print "total training errors:", train_errs
-    print "total training accuracy", train_accuracy
+    print("total training errors:", train_errs)
+    print("total training accuracy:", train_accuracy)
 
     Y_predict = best_classifier.predict(X_test)
 
     test_errs, test_accuracy = classif_err(expand(Y_predict), expand(Y_test_multi))
-    print "total test errors:", test_errs
-    print "total test accuracy:", test_accuracy
-    print
+    print("total test errors:", test_errs)
+    print("total test accuracy:", test_accuracy)
+    print("")
 
 if __name__ == "__main__":
-
     parser = ClassificationParser()
+
     parser.add_argument(
             '--norun_bin_lin',
             action='store_true',
@@ -164,18 +165,18 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    print "Loading training data"
+    print("Loading training data")
     training_preprocessor = Preprocessor(args.train_file)
     training_preprocessor.cleanup()
     training_dictionary = training_preprocessor.get_dictionary()
     X_train, Y_train_multi, Y_train_binary = training_preprocessor.featurize(training_dictionary)
 
-    print "Loading validation data"
+    print("Loading validation data")
     training_preprocessor = Preprocessor(args.val_file)
     training_preprocessor.cleanup()
     X_val, Y_val_multi, Y_val_binary = training_preprocessor.featurize(training_dictionary)
 
-    print "Loading testing data"
+    print("Loading testing data")
     testing_preprocessor = Preprocessor(args.test_file)
     testing_preprocessor.cleanup()
     X_test, Y_test_multi, Y_test_binary = testing_preprocessor.featurize(training_dictionary)
