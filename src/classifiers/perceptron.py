@@ -1,3 +1,5 @@
+import sys, os
+sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/../preprocessing')
 import numpy as np
 from sklearn.linear_model import perceptron
 from preprocess import *
