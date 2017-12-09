@@ -4,6 +4,12 @@ import argparse
 import pdb
 import csv
 
+# column id numbers
+REVIEW_BUSID_IDX = 4
+BUSINESS_BUSID_IDX = -1
+BUSINESS_STATE_IDX = -1
+BUSINESS_CITY_IDX = -1
+
 def get_review_data(csv_file):
     names = ('funny', 'user_id', 'review_id', 'text', 'business_id', \
                  'stars', 'date', 'useful', 'cool')

@@ -11,11 +11,12 @@ class Preprocessor:
 
     REM_PUNC = ['.', ',']
     STOPWORDS = set(nltk.corpus.stopwords.words('english'))
+    ATTRIBUTE_NAMES = ['city']
 
 
     def __init__(self, review_csv_file, business_csv_file='', business_filter_file='', verbose=False):
         self.review_data = get_review_data(review_csv_file)
-        self.business_data = self.make_business_dict(business_csv_file, business_filter_file)
+        self.business_data, self.attributes = self.make_business_dict(business_csv_file, business_filter_file)
         self.n, = self.review_data.shape
         self.verbose = verbose
 
@@ -29,14 +30,42 @@ class Preprocessor:
     """
     Make dictionary of business id's to business information.
     Can optionally give a text file of business id's to filter with.
-    """   
+    """  
     def make_business_dict(self, business_csv_file, business_filter_file=''):
+        if len(business_csv_file) == 0:
+            return {}, {}
+
         print('making dictionary of businesses...')
         business_data = get_business_data(business_csv_file)
+        if len(business_filter_file) > 0:
+            label, bus_ids = construct_filtered_set(business_filter_file)
+            business_data = get_filtered_business_data(business_data, BUSINESS_BUSID_IDX, bus_ids)
+
+        # initialize attributes dict
+        attributes = {}
+        for a_name in self.ATTRIBUTE_NAMES:
+            attributes[a_name] = []
+
+        # populate business and attributes dicts
         business_dict = {}
         for row in business_data:
             business_dict[row['business_id']] = row
-        return business_dict
+            for a_name in self.ATTRIBUTE_NAMES:
+                a = row[a_name].title()
+                if a not in attributes[a_name]:
+                    attributes[a_name].append(a)
+
+        return business_dict, attributes
+
+
+    """Setter for business dictionary"""
+    def set_business_dict(self, business_dict):
+        self.business_dict = business_dict
+
+
+    """Setter for attributes"""
+    def set_attributes(self, attributes):
+        self.attributes = attributes
 
 
     """Clean up reviews from csv file and . """
