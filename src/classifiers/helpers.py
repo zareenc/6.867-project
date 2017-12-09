@@ -43,6 +43,7 @@ def ClassificationParser():
             help='use tf_idf normalization for bag of words featurization',
             )
     return parser
+from six.moves import cPickle as pickle
 
 '''
 Return number of classification errors
@@ -97,3 +98,30 @@ Returns arr as an (n, 1) numpy array, does not mutate arr
 '''
 def expand(arr):
     return np.reshape(arr, (arr.shape[0], 1))
+
+'''
+Loads serialized python dictionaries.
+
+Arguments:
+    The pickle file path to load
+
+Returns the training, validation, and test sets
+'''
+def load_pickled_dataset(pickle_file):
+    print("Loading datasets...")
+    with open(pickle_file, 'rb') as f:
+        save = pickle.load(f)
+
+        X_train = save['X_train']
+        Y_train_multi = save['Y_train_multi']
+        Y_train_binary = save['Y_train_binary']
+        X_val = save['X_val']
+        Y_val_multi = save['Y_val_multi']
+        Y_val_binary = save['Y_val_binary']
+        X_test = save['X_test']
+        Y_test_multi = save['Y_test_multi']
+        Y_test_binary = save['Y_test_binary']
+
+        del save  # hint to help gc free up memory
+
+    return X_train, Y_train_multi, Y_train_binary, X_val, Y_val_multi, Y_val_binary, X_test, Y_test_multi, Y_test_binary
