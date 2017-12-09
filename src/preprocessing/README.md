@@ -1,3 +1,5 @@
+# Data Manipulation and Preprocessing
+This directory contains scripts for manipulating the Yelp data from the original JSON files into csv files that can be used by our classifiers. Make sure that you run all of these scripts using Python 3.
 
 ## Parsing JSON Data
 In order to convert one of the original JSON files from the dataset into a csv file, run
@@ -60,6 +62,17 @@ For example, if there is a file called filtered_reviews.csv in a data/ directory
 python csv_splitter.py data/ filtered_reviews 1000 --percent_train=0.5 --percent_val=0.25 --percent_test=0.25
 ```
 This will create 3 new files, filtered_reviews_train.csv, filtered_reviews_val.csv, and filtered_reviews_test.csv in the data/ directory. Each of these new file will have the header from the input file and the relevant number of lines. So filtered_reviews_train.csv will have 50 lines, etc. The default split if you don't give those arguments is 60-20-20. You must put in all parameters if you are not using the default, and there is no checking to see if it adds up to 100%.
+
+## Serializing the Data
+If you want to package the train, validation, and test sets into a pickle file, call
+```
+python make_pickle_file.csv path_to_training_data path_to_validation_data path_to_testing_data path_to_pickle_file
+```
+For example:
+```
+python make_pickle_file.csv data/filtered_reviews_train.csv data/filtered_reviews_val.csv data/filtered_reviews_test.csv data/filtered_reviews.pickle
+```
+Currently none of our classifiers take in pickle files.
 
 ## Featurizing Data
 When you have your filtered training, validation, and test csv files, you can featurize the inputs and generate both binary and multiclass labels for the data as follows:
