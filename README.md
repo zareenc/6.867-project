@@ -1,7 +1,7 @@
 # 6.867 Final Project
 
 ## Requirements
-* Python 3
+- Python 3
 - Python packages:
    - `numpy`
    - `scikit-learn`
