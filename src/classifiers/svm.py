@@ -165,18 +165,18 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    print "Loading training data"
+    print("Loading training data")
     training_preprocessor = Preprocessor(args.train_file)
     training_preprocessor.cleanup()
     training_dictionary = training_preprocessor.get_dictionary()
     X_train, Y_train_multi, Y_train_binary = training_preprocessor.featurize(training_dictionary)
 
-    print "Loading validation data"
+    print("Loading validation data")
     training_preprocessor = Preprocessor(args.val_file)
     training_preprocessor.cleanup()
     X_val, Y_val_multi, Y_val_binary = training_preprocessor.featurize(training_dictionary)
 
-    print "Loading testing data"
+    print("Loading testing data")
     testing_preprocessor = Preprocessor(args.test_file)
     testing_preprocessor.cleanup()
     X_test, Y_test_multi, Y_test_binary = testing_preprocessor.featurize(training_dictionary)
