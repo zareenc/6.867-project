@@ -14,9 +14,9 @@ class Preprocessor:
     ATTRIBUTE_NAMES = ['city']
 
 
-    def __init__(self, review_csv_file, business_csv_file='', business_filter_file='', verbose=False):
+    def __init__(self, review_csv_file, business_csv_file='', verbose=False):
         self.review_data = get_review_data(review_csv_file)
-        self.business_data, self.attributes = self.make_business_dict(business_csv_file, business_filter_file)
+        self.business_data, self.attributes = self.make_business_dict(business_csv_file)
         self.n, = self.review_data.shape
         self.verbose = verbose
 
@@ -31,19 +31,15 @@ class Preprocessor:
     Make dictionary of business id's to business information.
     Can optionally give a text file of business id's to filter with.
     """  
-    def make_business_dict(self, business_csv_file, business_filter_file=''):
-        if business_csv_file is None:     # FIX THIS - breaks on the default
+    def make_business_dict(self, business_csv_file):
+        if business_csv_file is None:
             return {}, {}
 
         # get business data
-        print('making dictionary of businesses...')
         business_data = get_business_data(business_csv_file)
-        if business_filter_file is not None:   # FIX THIS - breaks on the default
-            _, bus_ids = construct_filtered_set(business_filter_file)
-            business_id_col_index = 15
-            business_data = get_filtered_business_data(business_data, business_id_col_index, bus_ids)
 
         # initialize attributes dict
+        print('making dictionary of businesses...')
         attributes = {}
         for a_name in self.ATTRIBUTE_NAMES:
             attributes[a_name] = []
@@ -228,19 +224,13 @@ if __name__ == "__main__":
             type=str,
             help='The business csv file.',
             )
-    parser.add_argument(
-            '--business_filter_file',
-            type=str,
-            help='Text file of business id\'s to filter business with.',
-            )
 
     args = parser.parse_args()
     review_csv_file = args.review_csv_file
     business_csv_file = args.business_csv_file
-    business_filter_file = args.business_filter_file
     multi_class = True
 
-    preprocess = Preprocessor(review_csv_file, business_csv_file, business_filter_file)
+    preprocess = Preprocessor(review_csv_file, business_csv_file)
 
     print('cleaning up reviews...')
     preprocess.cleanup(modify_words_dictionary=True)
