@@ -81,10 +81,12 @@ if __name__ == "__main__":
     frequency = args.frequency
     tf_idf = args.tf_idf
 
+    features = ['city']
+
     # clean up reviews
-    preprocessor_train = Preprocessor(train_csv_file)
-    preprocessor_val = Preprocessor(val_csv_file)
-    preprocessor_test = Preprocessor(test_csv_file)
+    preprocessor_train = Preprocessor(train_csv_file, args.business_csv, args.business_filter)
+    preprocessor_val = Preprocessor(val_csv_file, args.business_csv, args.business_filter)
+    preprocessor_test = Preprocessor(test_csv_file, args.business_csv, args.business_filter)
     print("cleaning up reviews...")
     preprocessor_train.cleanup(modify_words_dictionary=True)
     preprocessor_val.cleanup()
@@ -93,9 +95,9 @@ if __name__ == "__main__":
     # featurize training, validation, test data
     print("featurizing training, validation, test data...")
     train_dict = preprocessor_train.get_words_dictionary()
-    X_train, Y_train = preprocessor_train.featurize(train_dict, multi_class, frequency=frequency, tf_idf=tf_idf)
-    X_val, Y_val = preprocessor_val.featurize(train_dict, multi_class, frequency=frequency, tf_idf=tf_idf)
-    X_test, Y_test = preprocessor_test.featurize(train_dict, multi_class, frequency=frequency, tf_idf=tf_idf)
+    X_train, Y_train = preprocessor_train.featurize(train_dict, multi_class, frequency=frequency, tf_idf=tf_idf, feature_attributes_to_use=features)
+    X_val, Y_val = preprocessor_val.featurize(train_dict, multi_class, frequency=frequency, tf_idf=tf_idf, feature_attributes_to_use=features)
+    X_test, Y_test = preprocessor_test.featurize(train_dict, multi_class, frequency=frequency, tf_idf=tf_idf, feature_attributes_to_use=features)
 
     # run logistic regression
     lambdas = [0.01, 0.1, 0.5, 1., 5., 10.]

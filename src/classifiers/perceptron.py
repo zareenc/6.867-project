@@ -29,19 +29,22 @@ if __name__ == "__main__":
 	val_csv = args.val_file
 	test_csv = args.test_file
 
-	pre_train = Preprocessor(train_csv)
-	pre_val = Preprocessor(val_csv)
-	pre_test = Preprocessor(test_csv)
+	features = ['city']
+
+	# pre_train = Preprocessor(train_csv)
+	pre_train = Preprocessor(train_csv, args.business_csv, args.business_filter)
+	pre_val = Preprocessor(val_csv, args.business_csv, args.business_filter)
+	pre_test = Preprocessor(test_csv, args.business_csv, args.business_filter)
 
 	pre_train.cleanup(modify_words_dictionary=True)
 	dict_train = pre_train.get_words_dictionary()
-	X_TRAIN, Y_TRAIN_BINARY = pre_train.featurize(dict_train, multi_class)
+	X_TRAIN, Y_TRAIN_BINARY = pre_train.featurize(dict_train, multi_class, feature_attributes_to_use=features)
 
 	pre_val.cleanup()
-	X_VAL, Y_VAL_BINARY = pre_val.featurize(dict_train, multi_class)
+	X_VAL, Y_VAL_BINARY = pre_val.featurize(dict_train, multi_class, feature_attributes_to_use=features)
 
 	pre_test.cleanup()
-	X_TEST, Y_TEST_BINARY = pre_test.featurize(dict_train, multi_class)
+	X_TEST, Y_TEST_BINARY = pre_test.featurize(dict_train, multi_class, feature_attributes_to_use=features)
 	
 	# training
 	model = train_perceptron(X_TRAIN, Y_TRAIN_BINARY)

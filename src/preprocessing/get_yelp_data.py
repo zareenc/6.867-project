@@ -92,24 +92,24 @@ def construct_filtered_set(txt_file_path):
                 filtered_values.add(line.strip())
     return title, filtered_values
 
-def get_filtered_business_data(business_data, column_name, filtered_value_set):
+def get_filtered_business_data(business_data, filter_column_index, filtered_value_set):
     filtered_businesses = []
     for business in business_data:
-        if business[column_name].decode('utf-8') in filtered_value_set:
+        if business[filter_column_index].decode('utf-8') in filtered_value_set:
             filtered_businesses.append(business)
     return filtered_businesses
 
 def get_filtered_review_data(review_data, filter_column_index, filtered_value_set):
     filtered_reviews = []
     for review in review_data:
-        if review[filter_column_index] in filtered_value_set:
+        if review[filter_column_index].decode('utf-8') in filtered_value_set:
             filtered_reviews.append(review)
     return filtered_reviews
 
 def write_reviews_to_csv_file(input_data, csv_file_path, delimiter='\t'):
     names = ('funny', 'user_id', 'review_id', 'text', 'business_id', \
                  'stars', 'date', 'useful', 'cool')
-    with open(csv_file_path, 'wb+') as fout:
+    with open(csv_file_path, 'w+') as fout:
         csv_file = csv.writer(fout, delimiter=delimiter)
         csv_file.writerow(names)
         for review in input_data:

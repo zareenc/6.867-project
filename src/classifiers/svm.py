@@ -166,21 +166,24 @@ if __name__ == "__main__":
     args = parser.parse_args()
     multi_class = args.multi_class
 
+    #features = []
+    features = ['city']
+
     print("Loading training data")
-    training_preprocessor = Preprocessor(args.train_file)
+    training_preprocessor = Preprocessor(args.train_file, args.business_csv, args.business_filter)
     training_preprocessor.cleanup(modify_words_dictionary=True)
     training_dictionary = training_preprocessor.get_words_dictionary()
-    X_train, Y_train = training_preprocessor.featurize(training_dictionary, multi_class)
-
+    X_train, Y_train = training_preprocessor.featurize(training_dictionary, multi_class, feature_attributes_to_use=features)
+    
     print("Loading validation data")
-    training_preprocessor = Preprocessor(args.val_file)
+    training_preprocessor = Preprocessor(args.val_file, args.business_csv, args.business_filter)
     training_preprocessor.cleanup()
-    X_val, Y_val = training_preprocessor.featurize(training_dictionary, multi_class)
+    X_val, Y_val = training_preprocessor.featurize(training_dictionary, multi_class, feature_attributes_to_use=features)
 
     print("Loading testing data")
-    testing_preprocessor = Preprocessor(args.test_file)
+    testing_preprocessor = Preprocessor(args.test_file, args.business_csv, args.business_filter)
     testing_preprocessor.cleanup()
-    X_test, Y_test = testing_preprocessor.featurize(training_dictionary, multi_class)
+    X_test, Y_test = testing_preprocessor.featurize(training_dictionary, multi_class, feature_attributes_to_use=features)
 
     Cees = [0.01, 0.1, 1, 5, 10]
     gammas = []

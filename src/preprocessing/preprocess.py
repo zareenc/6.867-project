@@ -32,15 +32,16 @@ class Preprocessor:
     Can optionally give a text file of business id's to filter with.
     """  
     def make_business_dict(self, business_csv_file, business_filter_file=''):
-        if len(business_csv_file) == 0:     # FIX THIS - breaks on the default
+        if business_csv_file is None:     # FIX THIS - breaks on the default
             return {}, {}
 
         # get business data
         print('making dictionary of businesses...')
         business_data = get_business_data(business_csv_file)
-        if len(business_filter_file) > 0:   # FIX THIS - breaks on the default
-            label, bus_ids = construct_filtered_set(business_filter_file)
-            business_data = get_filtered_business_data(business_data, 'business_id', bus_ids)
+        if business_filter_file is not None:   # FIX THIS - breaks on the default
+            _, bus_ids = construct_filtered_set(business_filter_file)
+            business_id_col_index = 15
+            business_data = get_filtered_business_data(business_data, business_id_col_index, bus_ids)
 
         # initialize attributes dict
         attributes = {}
@@ -167,17 +168,18 @@ class Preprocessor:
 
             
         # include other attributes in feature vector
-        for attribute in self.attributes.keys(): 
+        for attribute in self.attributes.keys():
             if str(attribute) in feature_attributes_to_use:
+                print(str(attribute), "in feature_attributes_to_use")
                 option_list_len = len(self.attributes[attribute])
 
                 # this is new feature vector that will be concatenated
-                Xnew = np.zeros(self.n, option_list_len)
+                Xnew = np.zeros((self.n, option_list_len))
 
                 for i in range(self.n):
                     review_row = self.review_data[i]
                     review_id = review_row['review_id'].decode("utf-8")
-                    business_id = review_row['business_id'].decode("utf-8")
+                    business_id = review_row['business_id'] #.decode("utf-8")
                         
                     if review_id in self.good_ids:
                         option_list = self.attributes[attribute]
