@@ -8,9 +8,10 @@ import pdb
 from helpers import *
 from preprocess import *
 
+CLUSTER_NUMBER = 5
 
 def train_kmeans(X_train):
-	kmeans = KMeans(n_clusters=5, init='k-means++')
+	kmeans = KMeans(n_clusters=CLUSTER_NUMBER, init='k-means++')
 	kmeans.fit(X_train)
 	return kmeans
 
@@ -31,13 +32,19 @@ def dict_compare_tuples(compares):
 	return dict_compares
 
 def kmeans_stats(compares):
-	mean = {0:None, 1:None, 2:None, 3:None, 4:None}
-	stdev = {0:None, 1:None, 2:None, 3:None, 4:None}
-	median = {0:None, 1:None, 2:None, 3:None, 4:None}
-	mode = {0:None, 1:None, 2:None, 3:None, 4:None}
+	mean = {}
+	stdev = {}
+	median = {}
+	mode = {}
+	#initialize all to None
+	for i in range(CLUSTER_NUMBER):
+		mean[i] = None
+		stdev[i] = None
+		median[i] = None
+		mode[i] = None
 
 	listoflists = []
-	for i in range(5):
+	for i in range(CLUSTER_NUMBER):
 		clusterlist = []
 		for tup in compares:
 			pred = tup[0]
@@ -46,7 +53,7 @@ def kmeans_stats(compares):
 				clusterlist.append(pred)
 		listoflists.append(clusterlist)
 
-	for i in range(5):
+	for i in range(CLUSTER_NUMBER):
 		try:
 			mean[i] = statistics.mean(listoflists[i])
 		except:
