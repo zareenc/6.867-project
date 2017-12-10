@@ -1,8 +1,12 @@
 import sys, os
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/../preprocessing')
+
 import numpy as np
 import matplotlib.pyplot as plt
+from sklearn.cluster import k_means_
+from sklearn.metrics.pairwise import cosine_similarity, pairwise_distances
 from sklearn.cluster import KMeans
+from sklearn.cluster import MiniBatchKMeans
 import statistics
 import pdb
 from helpers import *
@@ -11,8 +15,18 @@ from preprocess import *
 CLUSTER_NUMBER = 5
 
 def train_kmeans(X_train):
-	kmeans = KMeans(n_clusters=CLUSTER_NUMBER, init='k-means++')
+	
+	# Manually override euclidean to use cosine similarity
+	def euc_dist(X, Y = None, Y_norm_squared = None, squared = False):
+		#return pairwise_distances(X, Y, metric = 'cosine', n_jobs = 10)
+		return np.arccos(cosine_similarity(X, Y))/np.pi
+
+	k_means_.euclidean_distances = euc_dist
+
+	#kmeans = KMeans(n_clusters=CLUSTER_NUMBER, init='k-means++', n_init=500, max_iter=1000, tol=0.0001)
+	kmeans = MiniBatchKMeans(n_clusters=CLUSTER_NUMBER, init='k-means++', n_init=500, max_iter=1000, tol=0.000001)
 	kmeans.fit(X_train)
+	print(kmeans.labels_)
 	return kmeans
 
 def get_comparison_tuples(predictions, labels_multi):
