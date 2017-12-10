@@ -8,7 +8,7 @@ import pdb
 
 
 def train_perceptron(X_train, Y_train):
-	p = perceptron.Perceptron()
+	p = perceptron.Perceptron(penalty='l2')
 	p.fit(X_train, np.ravel(Y_train))
 	return p
 
