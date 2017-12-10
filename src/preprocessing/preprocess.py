@@ -241,7 +241,7 @@ if __name__ == "__main__":
     preprocess = Preprocessor(review_csv_file, business_csv_file, business_filter_file)
 
     print('cleaning up reviews...')
-    preprocess.cleanup()
+    preprocess.cleanup(modify_words_dictionary=True)
     print('making words dictionary...')
     dic = preprocess.get_words_dictionary()
     print('featurizing reviews...')
