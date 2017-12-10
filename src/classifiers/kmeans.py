@@ -121,6 +121,7 @@ if __name__ == "__main__":
 	# get arguments
 	parser = ClassificationParser()
 	args = parser.parse_args()
+	multi_class = True				# K-means should always be multiclass
 
 	train_csv = args.train_file
 	val_csv = args.val_file
@@ -130,15 +131,15 @@ if __name__ == "__main__":
 	pre_val = Preprocessor(val_csv)
 	pre_test = Preprocessor(test_csv)
 
-	pre_train.cleanup()
+	pre_train.cleanup(modify_words_dictionary=True)
 	dict_train = pre_train.get_words_dictionary()
-	X_TRAIN, Y_TRAIN_MULTI, Y_TRAIN_BINARY = pre_train.featurize(dict_train)
+	X_TRAIN, Y_TRAIN_MULTI = pre_train.featurize(dict_train, multi_class)
 
 	pre_val.cleanup()
-	X_VAL, Y_VAL_MULTI, Y_VAL_BINARY = pre_val.featurize(dict_train)
+	X_VAL, Y_VAL_MULTI = pre_val.featurize(dict_train, multi_class)
 
 	pre_test.cleanup()
-	X_TEST, Y_TEST_MULTI, Y_TEST_BINARY = pre_test.featurize(dict_train)
+	X_TEST, Y_TEST_MULTI = pre_test.featurize(dict_train, multi_class)
 	
 	# training
 	model = train_kmeans(X_TRAIN)
@@ -151,9 +152,9 @@ if __name__ == "__main__":
 	print("Training cluster median: ", tr_median)
 	print("Training cluster mode: ", tr_mode)
 	train_dict = dict_compare_tuples(train_comps)
-	err, acc = eval_accuracy(train_dict, 5)
-	print("Training error: ", err)
-	print("Training accuracy: ", acc)
+	#err, acc = eval_accuracy(train_dict, 5)
+	#print("Training error: ", err)
+	#print("Training accuracy: ", acc)
 
 	val_predictions = model.predict(X_VAL)
 	val_comps = get_comparison_tuples(val_predictions, Y_VAL_MULTI)
@@ -163,9 +164,9 @@ if __name__ == "__main__":
 	print("Validation assignment median: ", v_median)
 	print("Validation assignment mode: ", v_mode)
 	val_dict = dict_compare_tuples(val_comps)
-	err, acc = eval_accuracy(val_dict, 5)
-	print("Validation error: ", err)
-	print("Validation accuracy: ", acc)
+	#err, acc = eval_accuracy(val_dict, 5)
+	#print("Validation error: ", err)
+	#print("Validation accuracy: ", acc)
 
 	test_predictions = model.predict(X_TEST)
 	test_comps = get_comparison_tuples(test_predictions, Y_TEST_MULTI)
@@ -175,8 +176,8 @@ if __name__ == "__main__":
 	print("Test assignment median: ", te_median)
 	print("Test assignment mode: ", te_mode)
 	test_dict = dict_compare_tuples(test_comps)
-	err, acc = eval_accuracy(test_dict, 5)
-	print("Test error: ", err)
-	print("Test accuracy: ", acc)
+	#err, acc = eval_accuracy(test_dict, 5)
+	#print("Test error: ", err)
+	#print("Test accuracy: ", acc)
 
 

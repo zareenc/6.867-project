@@ -20,21 +20,10 @@ def get_perceptron_error(linear_model, X, Y):
 
 if __name__ == "__main__":
 
-	'''
-	csv files to run on: (nv and az)
-	
-	train: filtered_nv_reviews_train.csv
-	validation: filtered_nv_reviews_val.csv
-	test: filtered_nv_reviews_test.csv
-	
-	train: filtered_az_reviews_train.csv
-	validation: filtered_az_reviews_val.csv
-	test: filtered_az_reviews_test.csv
-	'''
-
 	# get arguments
 	parser = ClassificationParser()
 	args = parser.parse_args()
+	multi_class = False				# Perceptron should always be binary
 
 	train_csv = args.train_file
 	val_csv = args.val_file
@@ -44,15 +33,15 @@ if __name__ == "__main__":
 	pre_val = Preprocessor(val_csv)
 	pre_test = Preprocessor(test_csv)
 
-	pre_train.cleanup()
-	dict_train = pre_train.get_dictionary()
-	X_TRAIN, Y_TRAIN_MULTI, Y_TRAIN_BINARY = pre_train.featurize(dict_train)
+	pre_train.cleanup(modify_words_dictionary=True)
+	dict_train = pre_train.get_words_dictionary()
+	X_TRAIN, Y_TRAIN_BINARY = pre_train.featurize(dict_train, multi_class)
 
 	pre_val.cleanup()
-	X_VAL, Y_VAL_MULTI, Y_VAL_BINARY = pre_val.featurize(dict_train)
+	X_VAL, Y_VAL_BINARY = pre_val.featurize(dict_train, multi_class)
 
 	pre_test.cleanup()
-	X_TEST, Y_TEST_MULTI, Y_TEST_BINARY = pre_test.featurize(dict_train)
+	X_TEST, Y_TEST_BINARY = pre_test.featurize(dict_train, multi_class)
 	
 	# training
 	model = train_perceptron(X_TRAIN, Y_TRAIN_BINARY)

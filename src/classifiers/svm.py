@@ -164,34 +164,38 @@ if __name__ == "__main__":
             )
 
     args = parser.parse_args()
+    multi_class = args.multi_class
 
     print("Loading training data")
     training_preprocessor = Preprocessor(args.train_file)
-    training_preprocessor.cleanup()
-    training_dictionary = training_preprocessor.get_dictionary()
-    X_train, Y_train_multi, Y_train_binary = training_preprocessor.featurize(training_dictionary)
+    training_preprocessor.cleanup(modify_words_dictionary=True)
+    training_dictionary = training_preprocessor.get_words_dictionary()
+    X_train, Y_train = training_preprocessor.featurize(training_dictionary, multi_class)
 
     print("Loading validation data")
     training_preprocessor = Preprocessor(args.val_file)
     training_preprocessor.cleanup()
-    X_val, Y_val_multi, Y_val_binary = training_preprocessor.featurize(training_dictionary)
+    X_val, Y_val = training_preprocessor.featurize(training_dictionary, multi_class)
 
     print("Loading testing data")
     testing_preprocessor = Preprocessor(args.test_file)
     testing_preprocessor.cleanup()
-    X_test, Y_test_multi, Y_test_binary = testing_preprocessor.featurize(training_dictionary)
+    X_test, Y_test = testing_preprocessor.featurize(training_dictionary, multi_class)
 
     Cees = [0.01, 0.1, 1, 5, 10]
     gammas = []
     for exp in range(-5, 6):
             gammas.append(2**exp)
 
-    if not args.norun_bin_lin:
-        binary_linear_svm(Cees, X_train, Y_train_binary, X_val, Y_val_binary, X_test, Y_test_binary)
-    if not args.norun_bin_rbf:
-        binary_rbf_svm(Cees, gammas, X_train, Y_train_binary, X_val, Y_val_binary, X_test, Y_test_binary)
+if multi_class:
     if not args.norun_multi_lin:
-        multiclass_linear_svm(Cees, X_train, Y_train_multi, X_val, Y_val_multi, X_test, Y_test_multi)
+        multiclass_linear_svm(Cees, X_train, Y_train, X_val, Y_val, X_test, Y_test)
     if not args.norun_multi_rbf:
-        multiclass_rbf_svm(Cees, gammas, X_train, Y_train_multi, X_val, Y_val_multi, X_test, Y_test_multi)
+        multiclass_rbf_svm(Cees, gammas, X_train, Y_train, X_val, Y_val, X_test, Y_test)
+
+else:
+    if not args.norun_bin_lin:
+        binary_linear_svm(Cees, X_train, Y_train, X_val, Y_val, X_test, Y_test)
+    if not args.norun_bin_rbf:
+        binary_rbf_svm(Cees, gammas, X_train, Y_train, X_val, Y_val, X_test, Y_test)
 

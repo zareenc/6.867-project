@@ -62,13 +62,6 @@ def logistic_regression(X_train, Y_train, X_val, Y_val, \
     return (acc_train, acc_val, acc_test)
 
 if __name__ == "__main__":
-    '''
-    Sample files to try:
-    train_csv_file = 'data/filtered_nv_reviews_train.csv'
-    val_csv_file = 'data/filtered_nv_reviews_val.csv'
-    test_csv_file = 'data/filtered_nv_reviews_test.csv'
-    results_file = 'results/filtered_nv_reviews_lr.txt'
-    '''
 
     # parser of command line args
     parser = ClassificationParser()
@@ -93,26 +86,16 @@ if __name__ == "__main__":
     preprocessor_val = Preprocessor(val_csv_file)
     preprocessor_test = Preprocessor(test_csv_file)
     print("cleaning up reviews...")
-    preprocessor_train.cleanup()
+    preprocessor_train.cleanup(modify_words_dictionary=True)
     preprocessor_val.cleanup()
     preprocessor_test.cleanup()
 
     # featurize training, validation, test data
     print("featurizing training, validation, test data...")
-    train_dict = preprocessor_train.get_dictionary()
-    X_train, Y_train_multi, Y_train_binary = preprocessor_train.featurize(train_dict, frequency=frequency, tf_idf=tf_idf)
-    X_val, Y_val_multi, Y_val_binary = preprocessor_val.featurize(train_dict, frequency=frequency, tf_idf=tf_idf)
-    X_test, Y_test_multi, Y_test_binary = preprocessor_test.featurize(train_dict, frequency=frequency, tf_idf=tf_idf)
-
-    # select binary or multiclass labels
-    if multi_class:
-        Y_train = Y_train_multi
-        Y_val = Y_val_multi
-        Y_test = Y_test_multi
-    else:
-        Y_train = Y_train_binary
-        Y_val = Y_val_binary
-        Y_test = Y_test_binary
+    train_dict = preprocessor_train.get_words_dictionary()
+    X_train, Y_train = preprocessor_train.featurize(train_dict, multi_class, frequency=frequency, tf_idf=tf_idf)
+    X_val, Y_val = preprocessor_val.featurize(train_dict, multi_class, frequency=frequency, tf_idf=tf_idf)
+    X_test, Y_test = preprocessor_test.featurize(train_dict, multi_class, frequency=frequency, tf_idf=tf_idf)
 
     # run logistic regression
     lambdas = [0.01, 0.1, 0.5, 1., 5., 10.]
