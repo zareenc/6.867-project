@@ -84,9 +84,9 @@ if __name__ == "__main__":
     features = ['city']
 
     # clean up reviews
-    preprocessor_train = Preprocessor(train_csv_file, args.business_csv, args.business_filter)
-    preprocessor_val = Preprocessor(val_csv_file, args.business_csv, args.business_filter)
-    preprocessor_test = Preprocessor(test_csv_file, args.business_csv, args.business_filter)
+    preprocessor_train = Preprocessor(train_csv_file, args.business_csv)
+    preprocessor_val = Preprocessor(val_csv_file, args.business_csv)
+    preprocessor_test = Preprocessor(test_csv_file, args.business_csv)
     print("cleaning up reviews...")
     preprocessor_train.cleanup(modify_words_dictionary=True)
     preprocessor_val.cleanup()

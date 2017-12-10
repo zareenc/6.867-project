@@ -148,9 +148,9 @@ if __name__ == "__main__":
 	val_csv = args.val_file
 	test_csv = args.test_file
 
-	pre_train = Preprocessor(train_csv, args.business_csv, args.business_filter)
-	pre_val = Preprocessor(val_csv, args.business_csv, args.business_filter)
-	pre_test = Preprocessor(test_csv, args.business_csv, args.business_filter)
+	pre_train = Preprocessor(train_csv, args.business_csv)
+	pre_val = Preprocessor(val_csv, args.business_csv)
+	pre_test = Preprocessor(test_csv, args.business_csv)
 
 	features = ['city']
 

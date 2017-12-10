@@ -32,9 +32,9 @@ if __name__ == "__main__":
 	features = ['city']
 
 	# pre_train = Preprocessor(train_csv)
-	pre_train = Preprocessor(train_csv, args.business_csv, args.business_filter)
-	pre_val = Preprocessor(val_csv, args.business_csv, args.business_filter)
-	pre_test = Preprocessor(test_csv, args.business_csv, args.business_filter)
+	pre_train = Preprocessor(train_csv, args.business_csv)
+	pre_val = Preprocessor(val_csv, args.business_csv)
+	pre_test = Preprocessor(test_csv, args.business_csv)
 
 	pre_train.cleanup(modify_words_dictionary=True)
 	dict_train = pre_train.get_words_dictionary()
