@@ -186,7 +186,7 @@ if __name__ == '__main__':
 
         target_column_name = "business_id"
         scalar_filter_columns = ["state"]
-        scalar_filter_values = ["AZ"]a
+        scalar_filter_values = ["AZ"]
         filter_categories = ["Restaurants"]
 
         print "filtering businesses"
