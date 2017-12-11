@@ -28,12 +28,6 @@ def ClassificationParser():
             help='The business csv file to get extra features from.',
             )
     parser.add_argument(
-            '--business_filter',
-            type=str,
-            required=False,
-            help='The text file of businesses to filter.',
-            )
-    parser.add_argument(
             '--multi_class',
             type=bool,
             default=False,
