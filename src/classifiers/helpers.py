@@ -29,21 +29,21 @@ def ClassificationParser():
             )
     parser.add_argument(
             '--multi_class',
-            type=bool,
+            action='store_true',
             default=False,
             required=False,
             help='multiclass or binary classification',
             )
     parser.add_argument(
             '--frequency',
-            type=bool,
+            action='store_true',
             default=False,
             required=False,
             help='use frequency of presence for bag of words featurization',
             )
     parser.add_argument(
             '--tf_idf',
-            type=bool,
+            action='store_true',
             default=False,
             required=False,
             help='use tf_idf normalization for bag of words featurization',
