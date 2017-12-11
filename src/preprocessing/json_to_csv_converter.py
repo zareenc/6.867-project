@@ -174,10 +174,10 @@ if __name__ == '__main__':
     ## Create new unfiltered csv file ##
     csv_file = args.csv_file
 
-    print "getting column names"
+    print("getting column names")
     column_names = get_superset_of_column_names_from_file(json_file)
 
-    print "reading and writing file"
+    print("reading and writing file")
     read_and_write_file(json_file, csv_file, column_names, delimiter='\t')
 
     ## Create filtered business id set and write it to a file ##
@@ -189,9 +189,9 @@ if __name__ == '__main__':
         scalar_filter_values = ["AZ"]
         filter_categories = ["Restaurants"]
 
-        print "filtering businesses"
+        print("filtering businesses")
         filtered_business_ids = create_filtered_set(json_file, target_column_name, scalar_filter_columns, scalar_filter_values, filter_categories)
-        print "number of filtered businesses:", len(filtered_business_ids)
+        print("number of filtered businesses:", len(filtered_business_ids))
 
-        print "writing filtered business ids to text file"
+        print("writing filtered business ids to text file")
         write_txt_file(filtered_txt_file, "business_id", filtered_business_ids)
