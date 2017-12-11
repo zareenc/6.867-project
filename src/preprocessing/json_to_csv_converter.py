@@ -13,14 +13,14 @@ import pdb
 
 def read_and_write_file(json_file_path, csv_file_path, column_names, delimiter=None):
     """Read in the json dataset file and write it out to a csv file, given the column names."""
-    with open(csv_file_path, 'wb+') as fout:
+    with open(csv_file_path, 'w+') as fout:
         csv_file = csv.writer(fout, delimiter=delimiter)
         csv_file.writerow(list(column_names))
         with open(json_file_path) as fin:
             for line in fin:
                 line_contents = json.loads(line)
-                for k, v in line_contents.iteritems():
-                    if isinstance(v, basestring):
+                for k, v in line_contents.items():
+                    if isinstance(v, str):
                         line_contents[k] = re.sub(r'\r|\n', '', v)
                 csv_file.writerow(get_row(line_contents, column_names))
 
@@ -53,7 +53,7 @@ def get_column_names(line_contents, parent_key=''):
 
     """
     column_names = []
-    for k, v in line_contents.iteritems():
+    for k, v in line_contents.items():
         column_name = "{0}.{1}".format(parent_key, k) if parent_key else k
         if isinstance(v, collections.MutableMapping):
             column_names.extend(
@@ -97,7 +97,7 @@ def get_row(line_contents, column_names):
                         line_contents,
                         column_name,
                         )
-        if isinstance(line_value, unicode):
+        if isinstance(line_value, str):
             row.append('{0}'.format(line_value.encode('utf-8')))
         elif line_value is not None:
             row.append('{0}'.format(line_value))
@@ -106,7 +106,7 @@ def get_row(line_contents, column_names):
     return row
 
 def write_txt_file(txt_file_path, data_name, data_to_write, delimiter=None):
-    with open(txt_file_path, 'wb+') as fout:
+    with open(txt_file_path, 'w+') as fout:
         fout.write(data_name + "\n")
         for data_point in data_to_write:
             fout.write(data_point + "\n")
