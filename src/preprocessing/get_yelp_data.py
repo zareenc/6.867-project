@@ -59,6 +59,13 @@ def get_business_data(csv_file):
 def get_filtered_business_data(business_data, filtered_value_set):
     return get_filtered_data(business_data, BUSINESS_BUSID_IDX, filtered_value_set)
 
+''' User data '''
+def get_user_data(csv_file):
+    return get_data(csv_file, USER_NAMES)
+
+def get_filtered_user_data(user_data, filtered_value_set):
+    return get_filtered_data(user_data, USER_USERID_IDX, filtered_value_set)
+
 
 if __name__ == "__main__":
 
@@ -110,3 +117,14 @@ if __name__ == "__main__":
         filtered_data = get_filtered_business_data(data, business_ids)
         print("writing filtered business data to csv file")
         write_data_to_csv_file(filtered_data, filtered_file_name, BUSINESS_NAMES)
+        print("wrote filtered business data to ", filtered_file_name)
+
+    elif file_type == 'user':
+        data = get_user_data(csv_file)
+        print("constructing filtered set")
+        label, user_ids = construct_filtered_set(filter_values)
+        filtered_data = get_filtered_user_data(data, user_ids)
+        print("writing filtered user data to csv file")
+        write_data_to_csv_file(filtered_data, filtered_file_name, USER_NAMES)
+        print("wrote filtered user data to ", filtered_file_name)
+        
