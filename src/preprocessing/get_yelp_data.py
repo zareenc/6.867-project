@@ -59,6 +59,7 @@ def get_business_data(csv_file):
 def get_filtered_business_data(business_data, filtered_value_set):
     return get_filtered_data(business_data, BUSINESS_BUSID_IDX, filtered_value_set)
 
+
 ''' User data '''
 def get_user_data(csv_file):
     return get_data(csv_file, USER_NAMES)
@@ -75,7 +76,7 @@ if __name__ == "__main__":
     parser.add_argument(
             'file_type',
             type=str,
-            help='Review or business',
+            help='Review or business or user',
             )
     parser.add_argument(
             'csv_file',

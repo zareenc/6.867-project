@@ -184,14 +184,14 @@ if __name__ == '__main__':
     if args.filtered_txt_file:
         filtered_txt_file = args.filtered_txt_file
 
-        target_column_name = "business_id"
+        target_column_name = "user_id"
         scalar_filter_columns = ["state"]
         scalar_filter_values = ["AZ"]
         filter_categories = ["Restaurants"]
 
-        print("filtering businesses")
-        filtered_business_ids = create_filtered_set(json_file, target_column_name, scalar_filter_columns, scalar_filter_values, filter_categories)
-        print("number of filtered businesses:", len(filtered_business_ids))
+        print("filtering by ", target_column_name)
+        filtered_ids = create_filtered_set(json_file, target_column_name, scalar_filter_columns, scalar_filter_values, filter_categories)
+        print("number of filtered %s:%d" % (target_column_name, len(filtered_ids)))
 
-        print("writing filtered business ids to text file")
-        write_txt_file(filtered_txt_file, "business_id", filtered_business_ids)
+        print("writing filtered %s to text file" % target_column_name)
+        write_txt_file(filtered_txt_file, target_column_name, filtered_ids)
