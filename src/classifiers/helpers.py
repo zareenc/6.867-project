@@ -28,6 +28,12 @@ def ClassificationParser():
             help='The business csv file to get extra features from.',
             )
     parser.add_argument(
+            '--user_csv',
+            type=str,
+            required=False,
+            help='The user csv file to get extra features from.',
+            )
+    parser.add_argument(
             '--multi_class',
             action='store_true',
             default=False,

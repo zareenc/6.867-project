@@ -69,7 +69,7 @@ class Preprocessor:
     Can optionally give a text file of user id's to filter with.
     """  
     def make_user_dict(self, user_csv_file):
-        if user_csv_file is None:
+        if user_csv_file is None or len(user_csv_file) == 0:
             return {}
 
         # get user data
@@ -98,7 +98,7 @@ class Preprocessor:
     Can optionally give a text file of business id's to filter with.
     """  
     def make_business_dict(self, business_csv_file):
-        if business_csv_file is None:
+        if business_csv_file is None or len(business_csv_file) == 0:
             return {}
 
         # get business data
@@ -121,16 +121,16 @@ class Preprocessor:
 
 
     """Setter for business dictionary"""
-    def set_business_dict(self, business_dict):
-        self.business_dict = business_dict
+    def set_business_data(self, business_data):
+        self.business_data = business_data
 
     """Setter for user dictionary"""
-    def set_user_dict(self, user_dict):
-        self.user_dict = user_dict
+    def set_user_data(self, user_data):
+        self.user_data = user_data
 
     """Setter for attributes"""
-    def set_attributes(self, attributes):
-        self.attributes = attributes
+    def set_attributes(self, attributes_discrete):
+        self.attributes_discrete = attributes_discrete
 
 
     """Clean up reviews from csv file and . """

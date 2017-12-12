@@ -66,7 +66,7 @@ if __name__ == "__main__":
     # parser of command line args
     parser = ClassificationParser()
     parser.add_argument(
-            'results_file',
+            '--results_file',
             type=str,
             help='file to write results to',
             )
@@ -81,12 +81,21 @@ if __name__ == "__main__":
     frequency = args.frequency
     tf_idf = args.tf_idf
 
-    features = ['city']
+    features = ['average_stars']
 
     # clean up reviews
-    preprocessor_train = Preprocessor(train_csv_file, args.business_csv)
-    preprocessor_val = Preprocessor(val_csv_file, args.business_csv)
-    preprocessor_test = Preprocessor(test_csv_file, args.business_csv)
+    preprocessor_train = Preprocessor(train_csv_file, business_csv_file=args.business_csv, user_csv_file=args.user_csv)
+
+    preprocessor_val = Preprocessor(val_csv_file)
+    preprocessor_val.set_business_data(preprocessor_train.business_data)
+    preprocessor_val.set_user_data(preprocessor_train.user_data)
+    preprocessor_val.set_attributes(preprocessor_train.attributes_discrete)
+
+    preprocessor_test = Preprocessor(test_csv_file)
+    preprocessor_test.set_business_data(preprocessor_train.business_data)
+    preprocessor_test.set_user_data(preprocessor_train.user_data)
+    preprocessor_test.set_attributes(preprocessor_train.attributes_discrete)
+
     print("cleaning up reviews...")
     preprocessor_train.cleanup(modify_words_dictionary=True)
     preprocessor_val.cleanup()
@@ -126,7 +135,9 @@ if __name__ == "__main__":
             params_list.append(params_dict)
             results_list.append(results_dict)
     
-    write_results(results_file, params_list, results_list)
-    print("results written to %s\n" % results_file)
+    if results_file is not None:
+        write_results(results_file, params_list, results_list)
+        print("results written to %s\n" % results_file)
+
     print("best parameters", params_best)
     print("best results", results_best)

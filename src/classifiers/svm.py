@@ -167,21 +167,27 @@ if __name__ == "__main__":
     multi_class = args.multi_class
 
     #features = []
-    features = ['city']
+    features = ['average_stars']
 
     print("Loading training data")
-    training_preprocessor = Preprocessor(args.train_file, args.business_csv)
+    training_preprocessor = Preprocessor(args.train_file, business_csv_file=args.business_csv, user_csv_file=args.user_csv)
     training_preprocessor.cleanup(modify_words_dictionary=True)
     training_dictionary = training_preprocessor.get_words_dictionary()
     X_train, Y_train = training_preprocessor.featurize(training_dictionary, multi_class, feature_attributes_to_use=features)
     
     print("Loading validation data")
-    training_preprocessor = Preprocessor(args.val_file, args.business_csv)
-    training_preprocessor.cleanup()
-    X_val, Y_val = training_preprocessor.featurize(training_dictionary, multi_class, feature_attributes_to_use=features)
+    val_preprocessor = Preprocessor(args.val_file)
+    val_preprocessor.set_business_data(training_preprocessor.business_data)
+    val_preprocessor.set_user_data(training_preprocessor.user_data)
+    val_preprocessor.set_attributes(training_preprocessor.attributes_discrete)
+    val_preprocessor.cleanup()
+    X_val, Y_val = val_preprocessor.featurize(training_dictionary, multi_class, feature_attributes_to_use=features)
 
     print("Loading testing data")
     testing_preprocessor = Preprocessor(args.test_file, args.business_csv)
+    testing_preprocessor.set_business_data(training_preprocessor.business_data)
+    testing_preprocessor.set_user_data(training_preprocessor.user_data)
+    testing_preprocessor.set_attributes(training_preprocessor.attributes_discrete)
     testing_preprocessor.cleanup()
     X_test, Y_test = testing_preprocessor.featurize(training_dictionary, multi_class, feature_attributes_to_use=features)
 

@@ -29,22 +29,33 @@ if __name__ == "__main__":
 	val_csv = args.val_file
 	test_csv = args.test_file
 
-	features = ['city']
+	features = ['average_stars']
 
 	# pre_train = Preprocessor(train_csv)
-	pre_train = Preprocessor(train_csv, args.business_csv)
-	pre_val = Preprocessor(val_csv, args.business_csv)
-	pre_test = Preprocessor(test_csv, args.business_csv)
+	pre_train = Preprocessor(train_csv, business_csv_file=args.business_csv, user_csv_file=args.user_csv)
+
+	pre_val = Preprocessor(val_csv)
+	pre_val.set_business_data(pre_train.business_data)
+	pre_val.set_user_data(pre_train.user_data)
+	pre_val.set_attributes(pre_train.attributes_discrete)
+
+	pre_test = Preprocessor(test_csv)
+	pre_test.set_business_data(pre_train.business_data)
+	pre_test.set_user_data(pre_train.user_data)
+	pre_test.set_attributes(pre_train.attributes_discrete)
 
 	pre_train.cleanup(modify_words_dictionary=True)
 	dict_train = pre_train.get_words_dictionary()
-	X_TRAIN, Y_TRAIN_BINARY = pre_train.featurize(dict_train, multi_class, feature_attributes_to_use=features)
+	print("featurizing training data")
+	X_TRAIN, Y_TRAIN_BINARY = pre_train.featurize(dict_train, multi_class, feature_attributes_to_use=features, frequency=args.frequency, tf_idf=args.tf_idf)
 
 	pre_val.cleanup()
-	X_VAL, Y_VAL_BINARY = pre_val.featurize(dict_train, multi_class, feature_attributes_to_use=features)
+	print("featurizing validation data")
+	X_VAL, Y_VAL_BINARY = pre_val.featurize(dict_train, multi_class, feature_attributes_to_use=features, frequency=args.frequency, tf_idf=args.tf_idf)
 
 	pre_test.cleanup()
-	X_TEST, Y_TEST_BINARY = pre_test.featurize(dict_train, multi_class, feature_attributes_to_use=features)
+	print("featurizing test data")
+	X_TEST, Y_TEST_BINARY = pre_test.featurize(dict_train, multi_class, feature_attributes_to_use=features, frequency=args.frequency, tf_idf=args.tf_idf)
 	
 	# training
 	model = train_perceptron(X_TRAIN, Y_TRAIN_BINARY)
