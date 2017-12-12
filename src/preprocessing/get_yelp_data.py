@@ -3,6 +3,7 @@ import numpy as np
 import argparse
 import pdb
 import csv
+import sys
 from yelp_data_constants import *
 
 
@@ -42,6 +43,24 @@ def get_data(csv_file, names):
                              filling_values=filling)
     print("done getting data")
     return data
+
+def get_data_big(input_csv_file, names, filtered_column_name, \
+                     filtered_value_set, output_csv_file):
+    with open(input_csv_file, 'r') as fin:
+        print("reading from big csv")
+        csv.field_size_limit(sys.maxsize)
+        reader = csv.DictReader(fin, delimiter='\t') #, fieldnames=names)
+        with open(output_csv_file, 'w') as fout:
+            print("writing csv")
+            writer = csv.DictWriter(fout, names, delimiter='\t')
+            first = True
+            for row in reader:
+                if first:
+                    writer.writerow(row)
+                    first = False
+                if row[filtered_column_name] in filtered_value_set:
+                    writer.writerow(row)
+    print("done writing to csv")
 
 
 ''' Review data '''
@@ -101,6 +120,7 @@ if __name__ == "__main__":
     filter_values = args.filter_values
 
     if file_type == 'review':
+        print("review type")
         data = get_review_data(csv_file)
         if args.filtered_file_name:
             print("constructing filtered set")
@@ -112,6 +132,7 @@ if __name__ == "__main__":
                 write_data_to_csv_file(filtered_data, filtered_file_name, REVIEW_NAMES)
 
     elif file_type == 'business':
+        print("business type")
         data = get_business_data(csv_file)
         print("constructing filtered set")
         label, business_ids = construct_filtered_set(filter_values)
@@ -121,6 +142,13 @@ if __name__ == "__main__":
         print("wrote filtered business data to ", filtered_file_name)
 
     elif file_type == 'user':
+        print("constructing filtered set")
+        label, user_ids = construct_filtered_set(filter_values)
+        get_data_big(csv_file, USER_NAMES, label, \
+                     user_ids, filtered_file_name)
+
+        '''
+        print("user type")
         data = get_user_data(csv_file)
         print("constructing filtered set")
         label, user_ids = construct_filtered_set(filter_values)
@@ -128,4 +156,4 @@ if __name__ == "__main__":
         print("writing filtered user data to csv file")
         write_data_to_csv_file(filtered_data, filtered_file_name, USER_NAMES)
         print("wrote filtered user data to ", filtered_file_name)
-        
+        '''
