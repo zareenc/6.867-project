@@ -179,7 +179,8 @@ class Preprocessor:
                         
                     if review_id in self.good_ids:
                         option_list = self.attributes[attribute]
-                        option = self.business_data[business_id][attribute]
+                        option = self.business_data[business_id][attribute].title()
+                        # pdb.set_trace()
                         Xnew[i][option_list.index(option)] = 1
                             
                 # concatenate this

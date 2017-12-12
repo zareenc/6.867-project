@@ -13,13 +13,13 @@ def split(data_path, csv_file_name, total_num_lines, percent_train, percent_val,
     val_lines = int(percent_val * total_num_lines)
     test_lines = int(percent_test * total_num_lines)
 
-    print train_lines, val_lines, test_lines
+    print(train_lines, val_lines, test_lines)
 
     with open(input_file_name, 'r') as fin:
         # Open the new files - remember to close them at the end
-        train_file = open(train_file_name, 'wb+')
-        val_file = open(val_file_name, 'wb+')
-        test_file = open(test_file_name, 'wb+')
+        train_file = open(train_file_name, 'w+')
+        val_file = open(val_file_name, 'w+')
+        test_file = open(test_file_name, 'w+')
 
         train_writer = csv.writer(train_file, delimiter=delimiter)
         val_writer = csv.writer(val_file, delimiter=delimiter)
