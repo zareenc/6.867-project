@@ -59,10 +59,12 @@ def create_filtered_set_csv(csv_file_path, scalar_filter_col_names, \
 	return filtered_data
 
 def write_txt_file(txt_file_path, data_name, data_to_write, delimiter=None):
-    with open(txt_file_path, 'w+') as fout:
-        fout.write(data_name + "\n")
-        for data_point in data_to_write:
-            fout.write(str(data_point) + "\n")
+	with open(txt_file_path, 'w+') as fout:
+	    fout.write(data_name + "\n")
+	    for data_point in data_to_write:
+		    if isinstance(data_point, bytes):
+			    data_point = data_point.decode()
+		    fout.write(str(data_point) + "\n")
 
 def get_filtered_id_set(json_file_path, filter_column_name, filtered_value_set, id_column_name):
     ids = set()
