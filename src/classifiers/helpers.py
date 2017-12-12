@@ -1,5 +1,6 @@
 import numpy as np
 import argparse
+from sklearn.model_selection import cross_val_predict
 
 ''' Generic parser for classifiers '''
 def ClassificationParser():
@@ -104,6 +105,21 @@ Returns arr as an (n, 1) numpy array, does not mutate arr
 '''
 def expand(arr):
     return np.reshape(arr, (arr.shape[0], 1))
+
+'''
+Performs k-fold stratified cross validation.
+
+Arguments:
+    linear_model: An sklearn linear classifier, does not need to be fitted to data.
+    X: The data to split into k folds to perform cross validation
+    Y: The real labels
+    k: The number of sets to split the training data into.
+
+Returns the number of errors and accuracy of the cross validation predictions
+'''
+def get_cross_validation_error(linear_model, X, Y, k):
+    predictions = cross_val_predict(linear_model, X, np.ravel(Y), cv=k)
+    return classif_err(expand(predictions), Y)
 
 '''
 Loads serialized python dictionaries.

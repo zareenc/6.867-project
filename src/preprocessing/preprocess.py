@@ -113,9 +113,9 @@ class Preprocessor:
                 if self.verbose:
                     print("Couldn't tokenize review", review_id)
         
-        del review_row
-        del review
-        del review_id
+        # del review_row
+        # del review
+        # del review_id
 
         if self.verbose:
             print("total reviews: %d" % self.n)
@@ -153,9 +153,9 @@ class Preprocessor:
             Y_multi[i] = int(rating)
 
         # delete these variables when done
-        del review_row
-        del review_id
-        del rating
+        # del review_row
+        # del review_id
+        # del rating
 
         # normalize frequency counts in featurized inputs
         if frequency and tf_idf:

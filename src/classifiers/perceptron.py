@@ -16,9 +16,9 @@ def train_perceptron(X_train, Y_train):
 def get_perceptron_error(linear_model, X, Y):
 	return classif_err(expand(linear_model.predict(X)), Y)
 
-def get_cross_validation_error(linear_model, X, Y, k):
-	predictions = cross_val_predict(linear_model, X, np.ravel(Y), cv=k)
-	return classif_err(expand(predictions), Y)
+# def get_cross_validation_error(linear_model, X, Y, k):
+# 	predictions = cross_val_predict(linear_model, X, np.ravel(Y), cv=k)
+# 	return classif_err(expand(predictions), Y)
 
 
 if __name__ == "__main__":
@@ -43,16 +43,14 @@ if __name__ == "__main__":
 	pre_test.cleanup()
 	X_TEST, Y_TEST_BINARY = pre_test.featurize(dict_train, multi_class, feature_attributes_to_use=features)
 
-	print("Starting cross validation...")
+	k = 20
+
 	# training
-	k = 2
 	model = perceptron.Perceptron(penalty='l2')
 	_, acc_val = get_cross_validation_error(model, X_TRAIN, Y_TRAIN_BINARY, k)
 	print("Cross validation accuracy: ", acc_val)
 
-	print("Testing...")
 	# test
 	model = train_perceptron(X_TRAIN, Y_TRAIN_BINARY)
-	err_val, acc_val = get_perceptron_error(model, X_TEST, Y_TEST_BINARY)
-	print("test errors: ", err_val)
+	_, acc_val = get_perceptron_error(model, X_TEST, Y_TEST_BINARY)
 	print("test accuracy: ", acc_val)

@@ -8,39 +8,32 @@ from six.moves import cPickle as pickle
 from preprocess import Preprocessor
 from helpers import *
 
-def binary_linear_svm(Cees, X_train, Y_train_binary, X_val, Y_val_binary, X_test, Y_test_binary):
-    print
+def binary_linear_svm_cv(Cees, X_train, Y_train_binary, X_test, Y_test_binary, k):
+    print("")
     print("Running Binary Linear SVM")
     max_accuracy = 0
     best_C = 0
     best_classifier = None
     for C in Cees:
             binary_classifier = svm.SVC(C=C, kernel='linear')
-            binary_classifier.fit(X_train, np.ravel(Y_train_binary))
-            Y_predict = binary_classifier.predict(X_val)
-            val_errs, val_accuracy = classif_err(expand(Y_predict), expand(Y_val_binary))
-            print("C =", C, ", validation errors:", val_errs, ", validation accuracy:", val_accuracy)
-            if val_accuracy > max_accuracy:
-                max_accuracy = val_accuracy
+            _, acc_cv = get_cross_validation_error(binary_classifier, X_train, Y_train_binary, k)
+            print("C =", C, ", cross validation accuracy:", acc_cv)
+            if acc_cv > max_accuracy:
+                max_accuracy = acc_cv
                 best_C = C
                 best_classifier = binary_classifier
 
-    print("best C:", best_C)
+    print("best C:", best_C, ", best cross validation accuracy:", max_accuracy)
 
-    Y_predict = best_classifier.predict(X_train)
-    train_errs, train_accuracy = classif_err(expand(Y_predict), expand(Y_train_binary))
-    print("total training errors:", train_errs)
-    print("total training accuracy:", train_accuracy)
-
+    best_classifier.fit(X_train, np.ravel(Y_train_binary))
     Y_predict = best_classifier.predict(X_test)
 
-    test_errs, test_accuracy = classif_err(expand(Y_predict), expand(Y_test_binary))
-    print("total test errors:", test_errs)
+    _, test_accuracy = classif_err(expand(Y_predict), expand(Y_test_binary))
     print("total test accuracy:", test_accuracy)
-    print
+    print("")
 
 
-def binary_rbf_svm(Cees, gammas, X_train, Y_train_binary, X_val, Y_val_binary, X_test, Y_test_binary):
+def binary_rbf_svm_cv(Cees, gammas, X_train, Y_train_binary, X_test, Y_test_binary, k):
     print("")
     print("Running Binary RBF SVM")
     max_accuracy = 0
@@ -49,31 +42,24 @@ def binary_rbf_svm(Cees, gammas, X_train, Y_train_binary, X_val, Y_val_binary, X
     for C in Cees:
         for gamma in gammas:
             binary_classifier = svm.SVC(C=C, gamma=gamma)
-            binary_classifier.fit(X_train, np.ravel(Y_train_binary))
-            Y_predict = binary_classifier.predict(X_val)
-            val_errs, val_accuracy = classif_err(expand(Y_predict), expand(Y_val_binary))
-            print("C =", C, ", gamma =", gamma, ", validation errors:", val_errs, ", validation accuracy:", val_accuracy)
-            if val_accuracy > max_accuracy:
-                max_accuracy = val_accuracy
+            _, acc_cv = get_cross_validation_error(binary_classifier, X_train, Y_train_binary, k)
+            print("C =", C, ", gamma =", gamma, ", cross validation accuracy:", acc_cv)
+            if acc_cv > max_accuracy:
+                max_accuracy = acc_cv
                 best_C = C
                 best_gamma = gamma
                 best_classifier = binary_classifier
 
-    print("best C:", best_C, ", best gamma:", best_gamma)
+    print("best C:", best_C, ", best gamma:", best_gamma, ", best cross validation accuracy:", max_accuracy)
 
-    Y_predict = best_classifier.predict(X_train)
-    train_errs, train_accuracy = classif_err(expand(Y_predict), expand(Y_train_binary))
-    print("total training errors:", train_errs)
-    print("total training accuracy:", train_accuracy)
-
+    best_classifier.fit(X_train, np.ravel(Y_train_binary))
     Y_predict = best_classifier.predict(X_test)
 
-    test_errs, test_accuracy = classif_err(expand(Y_predict), expand(Y_test_binary))
-    print("total test errors:", test_errs)
+    _, test_accuracy = classif_err(expand(Y_predict), expand(Y_test_binary))
     print("total test accuracy:", test_accuracy)
     print("")
 
-def multiclass_linear_svm(Cees, X_train, Y_train_multi, X_val, Y_val_multi, X_test, Y_test_multi):
+def multiclass_linear_svm_cv(Cees, X_train, Y_train_multi, X_test, Y_test_multi, k):
     print("")
     print("Running Multiclass Linear SVM")
     max_accuracy = 0
@@ -81,31 +67,24 @@ def multiclass_linear_svm(Cees, X_train, Y_train_multi, X_val, Y_val_multi, X_te
     best_classifier = None
     for C in Cees:
             classifier = svm.SVC(C=C, kernel='linear', decision_function_shape='ovo')
-            classifier.fit(X_train, np.ravel(Y_train_multi))
-            Y_predict = classifier.predict(X_val)
-            val_errs, val_accuracy = classif_err(expand(Y_predict), expand(Y_val_multi))
-            print("C =", C, ", validation errors:", val_errs, ", validation accuracy:", val_accuracy)
-            if val_accuracy > max_accuracy:
-                max_accuracy = val_accuracy
+            _, acc_cv = get_cross_validation_error(classifier, X_train, Y_train_multi, k)
+            print("C =", C, ", cross validation accuracy:", acc_cv)
+            if acc_cv > max_accuracy:
+                max_accuracy = acc_cv
                 best_C = C
                 best_classifier = classifier
 
-    print("best C:", best_C)
+    print("best C:", best_C, ", best cross validation accuracy:", max_accuracy)
 
-    Y_predict = best_classifier.predict(X_train)
-    train_errs, train_accuracy = classif_err(expand(Y_predict), expand(Y_train_multi))
-    print("total training errors:", train_errs)
-    print("total training accuracy:", train_accuracy)
-
+    best_classifier.fit(X_train, np.ravel(Y_train_multi))
     Y_predict = best_classifier.predict(X_test)
 
-    test_errs, test_accuracy = classif_err(expand(Y_predict), expand(Y_test_multi))
-    print("total test errors:", test_errs)
+    _, test_accuracy = classif_err(expand(Y_predict), expand(Y_test_multi))
     print("total test accuracy:", test_accuracy)
     print("")
 
 
-def multiclass_rbf_svm(Cees, gammas, X_train, Y_train_multi, X_val, Y_val_multi, X_test, Y_test_multi):
+def multiclass_rbf_svm_cv(Cees, gammas, X_train, Y_train_multi, X_test, Y_test_multi, k):
     print("")
     print("Running Multiclass RBF SVM")
     max_accuracy = 0
@@ -115,28 +94,21 @@ def multiclass_rbf_svm(Cees, gammas, X_train, Y_train_multi, X_val, Y_val_multi,
     for C in Cees:
         for gamma in gammas:
             classifier = svm.SVC(C=C, gamma=gamma, decision_function_shape='ovo')
-            classifier.fit(X_train, np.ravel(Y_train_multi))
-            Y_predict = classifier.predict(X_val)
-            val_errs, val_accuracy = classif_err(expand(Y_predict), expand(Y_val_multi))
-            print("C =", C, ", gamma =", gamma, ", validation errors:", val_errs, ", validation accuracy:", val_accuracy)
-            if val_accuracy > max_accuracy:
-                max_accuracy = val_accuracy
+            _, acc_cv = get_cross_validation_error(classifier, X_train, Y_train_multi, k)
+            print("C =", C, ", gamma =", gamma, ", cross validation accuracy:", acc_cv)
+            if acc_cv > max_accuracy:
+                max_accuracy = acc_cv
                 best_C = C
                 best_gamma = gamma
                 best_classifier = classifier
 
-    print("best C:", best_C, ", best gamma:", best_gamma)
+    print("best C:", best_C, ", best gamma:", best_gamma, ", best cross validation accuracy:", max_accuracy)
 
-    Y_predict = best_classifier.predict(X_train)
-    train_errs, train_accuracy = classif_err(expand(Y_predict), expand(Y_train_multi))
-    print("total training errors:", train_errs)
-    print("total training accuracy:", train_accuracy)
-
+    best_classifier.fit(X_train, np.ravel(Y_train_multi))
     Y_predict = best_classifier.predict(X_test)
 
-    test_errs, test_accuracy = classif_err(expand(Y_predict), expand(Y_test_multi))
-    print("total test errors:", test_errs)
-    print("total test accuracy:", test_accuracy)
+    _, test_accuracy = classif_err(expand(Y_predict), expand(Y_test_multi))
+    print("test accuracy:", test_accuracy)
     print("")
 
 if __name__ == "__main__":
@@ -166,7 +138,6 @@ if __name__ == "__main__":
     args = parser.parse_args()
     multi_class = args.multi_class
 
-    #features = []
     features = ['city']
 
     print("Loading training data")
@@ -175,31 +146,27 @@ if __name__ == "__main__":
     training_dictionary = training_preprocessor.get_words_dictionary()
     X_train, Y_train = training_preprocessor.featurize(training_dictionary, multi_class, feature_attributes_to_use=features)
     
-    print("Loading validation data")
-    training_preprocessor = Preprocessor(args.val_file, args.business_csv)
-    training_preprocessor.cleanup()
-    X_val, Y_val = training_preprocessor.featurize(training_dictionary, multi_class, feature_attributes_to_use=features)
-
     print("Loading testing data")
     testing_preprocessor = Preprocessor(args.test_file, args.business_csv)
     testing_preprocessor.cleanup()
     X_test, Y_test = testing_preprocessor.featurize(training_dictionary, multi_class, feature_attributes_to_use=features)
 
-    pdb.set_trace()
-    Cees = [0.01, 0.1, 1, 5, 10]
+    Cees = [0.01, 0.1, 1, 5]
     gammas = []
-    for exp in range(-5, 6):
+    for exp in range(-5, -3):
             gammas.append(2**exp)
 
-if multi_class:
-    if not args.norun_multi_lin:
-        multiclass_linear_svm(Cees, X_train, Y_train, X_val, Y_val, X_test, Y_test)
-    if not args.norun_multi_rbf:
-        multiclass_rbf_svm(Cees, gammas, X_train, Y_train, X_val, Y_val, X_test, Y_test)
+    k = 5
 
-else:
-    if not args.norun_bin_lin:
-        binary_linear_svm(Cees, X_train, Y_train, X_val, Y_val, X_test, Y_test)
-    if not args.norun_bin_rbf:
-        binary_rbf_svm(Cees, gammas, X_train, Y_train, X_val, Y_val, X_test, Y_test)
+    if multi_class:
+        if not args.norun_multi_lin:
+            multiclass_linear_svm_cv(Cees, X_train, Y_train, X_test, Y_test, k)
+        if not args.norun_multi_rbf:
+            multiclass_rbf_svm_cv(Cees, gammas, X_train, Y_train, X_test, Y_test, k)
+
+    else:
+        if not args.norun_bin_lin:
+            binary_linear_svm_cv(Cees, X_train, Y_train, X_test, Y_test, k)
+        if not args.norun_bin_rbf:
+            binary_rbf_svm_cv(Cees, gammas, X_train, Y_train, X_test, Y_test, k)
 
