@@ -3,7 +3,8 @@ import nltk
 import argparse
 import pdb
 from sklearn.feature_extraction.text import TfidfTransformer
-from get_yelp_data import *
+from get_yelp_data import get_review_data, get_business_data, \
+    get_user_data
 
 
 class Preprocessor:
@@ -11,12 +12,23 @@ class Preprocessor:
 
     REM_PUNC = ['.', ',']
     STOPWORDS = set(nltk.corpus.stopwords.words('english'))
-    ATTRIBUTE_NAMES = ['city']
+    ATTRIBUTE_NAMES_DISCRETE = ['city']
+    ATTRIBUTE_NAMES_CONT = ['average_stars']
 
 
-    def __init__(self, review_csv_file, business_csv_file='', verbose=False):
+    '''
+    Initializes Preprocessor object.
+
+    self.attributes_discrete = {'city': ['Toronto', 'Ontario'...]}
+    self.attributes_cont = ['average_stars'...]
+    self.business_data = {{'business_id':10, 'name':'Garaje', 'city':'San Francisco'...},...}
+    self.user_data = {{'user_id':10, 'name':'Sebastien', 'average_stars':3.5...},...}
+    '''
+    def __init__(self, review_csv_file, business_csv_file='', user_csv_file='', verbose=False):
         self.review_data = get_review_data(review_csv_file)
-        self.business_data, self.attributes = self.make_business_dict(business_csv_file)
+        self.attributes_discrete, self.attributes_cont = self.init_attributes()
+        self.business_data = self.make_business_dict(business_csv_file)
+        self.user_data = self.make_user_dict(user_csv_file)
         self.n, = self.review_data.shape
         self.verbose = verbose
 
@@ -26,6 +38,51 @@ class Preprocessor:
         self.pos = {}
         self.words_dictionary = {}
 
+    """Initialize attributes dictionaries"""
+    def init_attributes(self):
+        attributes_discrete = {}
+        for a_name in self.ATTRIBUTE_NAMES_DISCRETE:
+            attributes_discrete[a_name] = []
+        attributes_cont = self.ATTRIBUTE_NAMES_CONT
+        return attributes_discrete, attributes_cont
+        
+    """
+    Returns the desired attribute for a particular review with the
+    given review, business, and user id.
+    """
+    def get_attribute_data(self, review_id, business_id, user_id, attribute):
+        if attribute == 'city':
+            return self.business_data[business_id][attribute]
+        elif attribute == 'average_stars':
+            return self.user_data[user_id][attribute]
+
+    """
+    Make dictionary of user id's to user information.
+    Can optionally give a text file of user id's to filter with.
+    """  
+    def make_user_dict(self, user_csv_file):
+        if user_csv_file is None:
+            return {}
+
+        # get user data
+        user_data = get_user_data(user_csv_file)
+
+        print('making dictionary of users...')
+        user_dict = {}
+        for row in user_data:
+            # populate user dict
+            user_dict[row['user_id']] = row
+
+            # populate discrete attributes dict with found values
+            for a_name in self.ATTRIBUTE_NAMES_DISCRETE:
+                try:
+                    a = row[a_name].title()
+                    if a not in self.attributes_discrete[a_name]:
+                        self.attributes_discrete[a_name].append(a)
+                except:
+                    continue
+        return user_dict
+
 
     """
     Make dictionary of business id's to business information.
@@ -33,32 +90,33 @@ class Preprocessor:
     """  
     def make_business_dict(self, business_csv_file):
         if business_csv_file is None:
-            return {}, {}
+            return {}
 
         # get business data
         business_data = get_business_data(business_csv_file)
 
-        # initialize attributes dict
-        print('making dictionary of businesses...')
-        attributes = {}
-        for a_name in self.ATTRIBUTE_NAMES:
-            attributes[a_name] = []
-
         # populate business and attributes dicts
+        print('making dictionary of businesses...')
         business_dict = {}
         for row in business_data:
             business_dict[row['business_id']] = row
-            for a_name in self.ATTRIBUTE_NAMES:
-                a = row[a_name].title()
-                if a not in attributes[a_name]:
-                    attributes[a_name].append(a)
-        return business_dict, attributes
+            for a_name in self.ATTRIBUTE_NAMES_DISCRETE:
+                try:
+                    a = row[a_name].title()
+                    if a not in self.attributes_discrete[a_name]:
+                        self.attributes_discrete[a_name].append(a)
+                except:
+                    continue
+        return business_dict
 
 
     """Setter for business dictionary"""
     def set_business_dict(self, business_dict):
         self.business_dict = business_dict
 
+    """Setter for user dictionary"""
+    def set_user_dict(self, user_dict):
+        self.user_dict = user_dict
 
     """Setter for attributes"""
     def set_attributes(self, attributes):
@@ -122,8 +180,10 @@ class Preprocessor:
             print("total errors: %d" % self.errors)
             print("dictionary size: %d" % len(self.words_dictionary))
             print("Other features:")
-            for attribute in self.attributes:
-                print(str(attribute) + " size: %d" % len(self.attributes[attribute]))
+            for attribute in self.attributes_discrete:
+                print(str(attribute) + " size: %d" % len(self.attributes_discrete[attribute]))
+            for attribute in self.attributes_cont:
+                print(str(attribute))
 
         return
 
@@ -137,7 +197,6 @@ class Preprocessor:
         Y_multi = np.zeros((self.n, 1))
 
         for i in range(self.n):
-
             review_row = self.review_data[i]
             review_id = review_row['review_id'].decode("utf-8")
             rating = review_row['stars']
@@ -151,6 +210,7 @@ class Preprocessor:
                             X[i][words_dict[token]] = 1
 
             Y_multi[i] = int(rating)
+        print("created X (feature) of shape", X.shape)
 
         # delete these variables when done
         del review_row
@@ -159,29 +219,56 @@ class Preprocessor:
 
         # normalize frequency counts in featurized inputs
         if frequency and tf_idf:
+            print("applying tf_idf transformation to X")
             tfidf_transformer = TfidfTransformer()
             X = tfidf_transformer.fit_transform(X).toarray()
-
             
-        # include other attributes in feature vector
-        for attribute in self.attributes.keys():
+        # include other discrete attributes in feature vector
+        for attribute in self.attributes_discrete.keys():
             if str(attribute) in feature_attributes_to_use:
-                print(str(attribute), "in feature_attributes_to_use")
-                option_list_len = len(self.attributes[attribute])
+                print(str(attribute), "in feature_attributes_to_use for discrete attributes")
+                option_list_len = len(self.attributes_discrete[attribute])
 
                 # this is new feature vector that will be concatenated
+                print("size of %s is %d" % (str(attribute), option_list_len))
                 Xnew = np.zeros((self.n, option_list_len))
 
                 for i in range(self.n):
                     review_row = self.review_data[i]
                     review_id = review_row['review_id'].decode("utf-8")
                     business_id = review_row['business_id'] #.decode("utf-8")
+                    user_id = review_row['user_id']
                         
                     if review_id in self.good_ids:
-                        option_list = self.attributes[attribute]
-                        option = self.business_data[business_id][attribute]
+                        option_list = self.attributes_discrete[attribute]
+                        option = self.get_attribute_data(review_id, \
+                                 business_id, user_id, attribute)
                         Xnew[i][option_list.index(option)] = 1
                             
+                # concatenate this
+                X = np.hstack((X, Xnew))
+                print("new X matrix is: ", X)
+
+        # include other continuous attributes in feature vector
+        for attribute in self.attributes_cont:
+            if str(attribute) in feature_attributes_to_use:
+                print(str(attribute), "in feature_attributes_to_use for continuous attributes")
+                
+                # this is new 1-dimensional feature vector that will be concatenated
+                print("size of %s is %d" % (str(attribute), 1))
+                Xnew = np.zeros((self.n, 1))
+
+                for i in range(self.n):
+                    review_row = self.review_data[i]
+                    review_id = review_row['review_id'].decode("utf-8")
+                    business_id = review_row['business_id'] #.decode("utf-8")
+                    user_id = review_row['user_id'].decode("utf-8")
+
+                    if review_id in self.good_ids:
+                        option = self.get_attribute_data(review_id, \
+                                 business_id, user_id, attribute)
+                        Xnew[i][0] = option
+
                 # concatenate this
                 X = np.hstack((X, Xnew))
                 print("new X matrix is: ", X)
@@ -191,8 +278,6 @@ class Preprocessor:
         # del review_id
         # del business_id
 
-        print("final X matrix is: ", X)
-
         # Y_binary is binary labels matrix
         # binary star ratings where 1-2 is -1 and 3-5 is +1
         Y_binary = np.where((Y_multi > 2), 1, -1)
@@ -200,7 +285,6 @@ class Preprocessor:
 
         if multiclass:
             return (X, Y_multi)
-
         return (X, Y_binary)
 
 
@@ -224,21 +308,53 @@ if __name__ == "__main__":
             type=str,
             help='The business csv file.',
             )
+    parser.add_argument(
+            '--user_csv_file',
+            type=str,
+            help='The user csv file.',
+            )
+    parser.add_argument(
+            '--multi_class',
+            action='store_true',
+            default=False,
+            required=False,
+            help='multiclass or binary classification',
+            )
+    parser.add_argument(
+            '--frequency',
+            action='store_true',
+            default=False,
+            required=False,
+            help='use frequency of presence for bag of words featurization',
+            )
+    parser.add_argument(
+            '--tf_idf',
+            action='store_true',
+            default=False,
+            required=False,
+            help='use tf_idf normalization for bag of words featurization',
+            )
 
     args = parser.parse_args()
     review_csv_file = args.review_csv_file
     business_csv_file = args.business_csv_file
-    multi_class = True
+    user_csv_file = args.user_csv_file
+    multi_class = args.multi_class
+    tf_idf = args.tf_idf
+    frequency = args.frequency
+    feature_attributes_to_use = ['city', 'average_stars']
 
-    preprocess = Preprocessor(review_csv_file, business_csv_file)
+    preprocess = Preprocessor(review_csv_file, business_csv_file, user_csv_file)
 
     print('cleaning up reviews...')
     preprocess.cleanup(modify_words_dictionary=True)
     print('making words dictionary...')
     dic = preprocess.get_words_dictionary()
     print('featurizing reviews...')
-    X, Y = preprocess.featurize(dic, multi_class)
+    X, Y = preprocess.featurize(dic, multi_class, \
+           tf_idf=tf_idf, frequency=frequency, \
+           feature_attributes_to_use=feature_attributes_to_use)
 
-    print("X (feature matrix) is: ", X)
-    print("Y (labels) is: ", Y)
+    print("X (feature matrix) shape is: ", X.shape)
+    print("Y (labels) shape is: ", Y.shape)
 
