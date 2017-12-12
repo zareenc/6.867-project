@@ -185,6 +185,7 @@ if __name__ == "__main__":
     testing_preprocessor.cleanup()
     X_test, Y_test = testing_preprocessor.featurize(training_dictionary, multi_class, feature_attributes_to_use=features)
 
+    pdb.set_trace()
     Cees = [0.01, 0.1, 1, 5, 10]
     gammas = []
     for exp in range(-5, 6):

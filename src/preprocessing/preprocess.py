@@ -194,9 +194,8 @@ class Preprocessor:
         print("final X matrix is: ", X)
 
         # Y_binary is binary labels matrix
-        # binary star ratings where 1-2 is -1 and 3-5 is +1
-        Y_binary = np.where((Y_multi > 2), 1, -1)
-        # Y_binary = np.where((Y_multi > 3), 1, -1)
+        # binary star ratings where 1-3 is -1 and 4-5 is +1
+        Y_binary = np.where((Y_multi > 3), 1, -1)
 
         if multiclass:
             return (X, Y_multi)

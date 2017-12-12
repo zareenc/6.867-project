@@ -31,7 +31,6 @@ if __name__ == "__main__":
 
 	features = ['city']
 
-	# pre_train = Preprocessor(train_csv)
 	pre_train = Preprocessor(train_csv, args.business_csv)
 	pre_val = Preprocessor(val_csv, args.business_csv)
 	pre_test = Preprocessor(test_csv, args.business_csv)

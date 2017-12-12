@@ -7,13 +7,13 @@ def get_even_data(input_csv_file, output_csv_file, num_classes, num_each_class, 
         return
 
     num_binary_classes = 2
-    positive_threshold = 3
+    positive_threshold = 4
     positive_review_index = 0
     negative_review_index = 1
 
     num_multi_classes = 5
 
-    output_file = open(output_csv_file, 'wb+')
+    output_file = open(output_csv_file, 'w+')
     output_writer = csv.writer(output_file, delimiter=delimiter)
 
     review_rating_index = 5
