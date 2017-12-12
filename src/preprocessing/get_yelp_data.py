@@ -4,6 +4,7 @@ import argparse
 import pdb
 import csv
 import sys
+import re
 from yelp_data_constants import *
 
 
@@ -31,7 +32,8 @@ def write_data_to_csv_file(input_data, csv_file_path, names, delimiter='\t'):
 def get_filtered_data(data, filter_column_index, filtered_value_set):
     filtered_data = []
     for d in data:
-        if d[filter_column_index].decode('utf-8') in filtered_value_set:
+        column_decoded = strip_bytes(d[filter_column_index])
+        if column_decoded in filtered_value_set:
             filtered_data.append(d)
     return filtered_data
 
@@ -50,17 +52,21 @@ def get_data_big(input_csv_file, names, filtered_column_name, \
         print("reading from big csv")
         csv.field_size_limit(sys.maxsize)
         reader = csv.DictReader(fin, delimiter='\t') #, fieldnames=names)
+
+        print("writing csv")
         with open(output_csv_file, 'w') as fout:
-            print("writing csv")
-            writer = csv.DictWriter(fout, names, delimiter='\t')
-            first = True
+            writer = csv.writer(fout, delimiter='\t')
+            writer.writerow(reader.fieldnames)
             for row in reader:
-                if first:
-                    writer.writerow(row)
-                    first = False
-                if row[filtered_column_name] in filtered_value_set:
-                    writer.writerow(row)
+                column_decoded = strip_bytes(row[filtered_column_name])
+                if column_decoded in filtered_value_set:
+                    writer.writerow(strip_bytes(v) for v in row.values())
     print("done writing to csv")
+
+def strip_bytes(s):
+    if 'b\'' in s:
+        return re.findall(r"b'(.*?)'", s)[0]
+    return s
 
 
 ''' Review data '''
