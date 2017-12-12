@@ -4,7 +4,7 @@ import argparse
 import pdb
 from sklearn.feature_extraction.text import TfidfTransformer
 from get_yelp_data import get_review_data, get_business_data, \
-    get_user_data
+    get_user_data, strip_bytes
 
 
 class Preprocessor:
@@ -52,9 +52,17 @@ class Preprocessor:
     """
     def get_attribute_data(self, review_id, business_id, user_id, attribute):
         if attribute == 'city':
-            return self.business_data[business_id][attribute]
+            try:
+                return strip_bytes(self.business_data[business_id][attribute])
+            except:
+                print("Could not find business id %s" % business_id)
+                return None
         elif attribute == 'average_stars':
-            return self.user_data[user_id][attribute]
+            try:
+                return strip_bytes(self.user_data[user_id][attribute])
+            except:
+                print("Could not find user id %s" % user_id)
+                return None
 
     """
     Make dictionary of user id's to user information.
@@ -71,16 +79,17 @@ class Preprocessor:
         user_dict = {}
         for row in user_data:
             # populate user dict
-            user_dict[row['user_id']] = row
+            user_dict[strip_bytes(row['user_id'])] = row
 
             # populate discrete attributes dict with found values
             for a_name in self.ATTRIBUTE_NAMES_DISCRETE:
                 try:
-                    a = row[a_name].title()
+                    a = strip_bytes(row[a_name].title())
                     if a not in self.attributes_discrete[a_name]:
                         self.attributes_discrete[a_name].append(a)
                 except:
                     continue
+        print('done making dictionary of users')
         return user_dict
 
 
@@ -99,14 +108,15 @@ class Preprocessor:
         print('making dictionary of businesses...')
         business_dict = {}
         for row in business_data:
-            business_dict[row['business_id']] = row
+            business_dict[strip_bytes(row['business_id'])] = row
             for a_name in self.ATTRIBUTE_NAMES_DISCRETE:
                 try:
-                    a = row[a_name].title()
+                    a = strip_bytes(row[a_name].title())
                     if a not in self.attributes_discrete[a_name]:
                         self.attributes_discrete[a_name].append(a)
                 except:
                     continue
+        print('done making dictionary of businesses')
         return business_dict
 
 
@@ -198,7 +208,7 @@ class Preprocessor:
 
         for i in range(self.n):
             review_row = self.review_data[i]
-            review_id = review_row['review_id'].decode("utf-8")
+            review_id = strip_bytes(review_row['review_id'])
             rating = review_row['stars']
 
             if review_id in self.good_ids:
@@ -235,15 +245,16 @@ class Preprocessor:
 
                 for i in range(self.n):
                     review_row = self.review_data[i]
-                    review_id = review_row['review_id'].decode("utf-8")
-                    business_id = review_row['business_id'] #.decode("utf-8")
-                    user_id = review_row['user_id']
+                    review_id = strip_bytes(review_row['review_id'])
+                    business_id = strip_bytes(review_row['business_id'])
+                    user_id = strip_bytes(review_row['user_id'])
                         
                     if review_id in self.good_ids:
                         option_list = self.attributes_discrete[attribute]
                         option = self.get_attribute_data(review_id, \
                                  business_id, user_id, attribute)
-                        Xnew[i][option_list.index(option)] = 1
+                        if option is not None:
+                            Xnew[i][option_list.index(option)] = 1
                             
                 # concatenate this
                 X = np.hstack((X, Xnew))
@@ -260,14 +271,15 @@ class Preprocessor:
 
                 for i in range(self.n):
                     review_row = self.review_data[i]
-                    review_id = review_row['review_id'].decode("utf-8")
-                    business_id = review_row['business_id'] #.decode("utf-8")
-                    user_id = review_row['user_id'].decode("utf-8")
+                    review_id = strip_bytes(review_row['review_id'])
+                    business_id = strip_bytes(review_row['business_id'])
+                    user_id = strip_bytes(review_row['user_id'])
 
                     if review_id in self.good_ids:
                         option = self.get_attribute_data(review_id, \
                                  business_id, user_id, attribute)
-                        Xnew[i][0] = option
+                        if option is not None:
+                            Xnew[i][0] = option
 
                 # concatenate this
                 X = np.hstack((X, Xnew))

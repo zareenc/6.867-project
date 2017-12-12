@@ -1,16 +1,24 @@
 # Column indices
 REVIEW_BUSID_IDX = 4
+REVIEW_USERID_IDX = 1
 BUSINESS_BUSID_IDX = 15
 USER_USERID_IDX = 2
 
 # Column names
 REVIEW_NAMES = ('funny', 'user_id', 'review_id', 'text', 'business_id', \
         'stars', 'date', 'useful', 'cool')
+USER_NAMES = ('funny', 'compliment_more', 'friends', 'useful', 'yelping_since', \
+                  'compliment_funny', 'user_id', 'complimen_note', 'compliment_photos', \
+                  'average_stars', 'compliment_hot', 'elite', 'fans', 'compliment_plain', \
+                  'review_count', 'compliment_writer', 'name', 'compliment_cool', 'cool', \
+                  'compliment_cute', 'compliment_list', 'compliment_profile')
+'''
 USER_NAMES = ('compliment_profile', 'compliment_funny', 'user_id', 'compliment_cute', \
         'friends', 'compliment_writer', 'compliment_list', 'useful', 'compliment_plain', \
         'compliment_note', 'yelping_since', 'cool', 'fans', 'review_count', 'funny', \
         'average_stars', 'compliment_more', 'elite', 'compliment_hot', 'name', \
         'compliment_cool', 'compliment_photos')
+'''
 BUSINESS_NAMES = ('attributes.Ambience.divey', 'attributes.RestaurantsDelivery', \
         'attributes.DogsAllowed', 'postal_code', 'hours.Thursday', \
         'attributes.HairSpecializesIn.coloring', 'attributes.BestNights.sunday', \

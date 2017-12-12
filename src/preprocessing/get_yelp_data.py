@@ -60,12 +60,15 @@ def get_data_big(input_csv_file, names, filtered_column_name, \
             for row in reader:
                 column_decoded = strip_bytes(row[filtered_column_name])
                 if column_decoded in filtered_value_set:
-                    writer.writerow(strip_bytes(v) for v in row.values())
+                    writer.writerow(row.values())
+                    # writer.writerow(strip_bytes(v) for v in row.values())
     print("done writing to csv")
 
 def strip_bytes(s):
-    if 'b\'' in s:
-        return re.findall(r"b'(.*?)'", s)[0]
+    if 'b\'' in str(s):
+        r = re.findall(r"b'(.*?)'", str(s))
+        if len(r) > 0:
+            return r[0]
     return s
 
 

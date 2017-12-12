@@ -93,7 +93,7 @@ if __name__ == '__main__':
     parser.add_argument(
 	    'file_type',
 	    type=str,
-	    help='review or business or user',
+	    help='File type of input file: review or business or user',
 	    )
 
     parser.add_argument(
