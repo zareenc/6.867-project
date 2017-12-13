@@ -167,7 +167,7 @@ if __name__ == "__main__":
     multi_class = args.multi_class
 
     #features = []
-    features = ['average_stars']
+    features = ['average_stars', 'city']
 
     print("Loading training data")
     training_preprocessor = Preprocessor(args.train_file, business_csv_file=args.business_csv, user_csv_file=args.user_csv)
@@ -196,15 +196,15 @@ if __name__ == "__main__":
     for exp in range(-5, 6):
             gammas.append(2**exp)
 
-if multi_class:
-    if not args.norun_multi_lin:
-        multiclass_linear_svm(Cees, X_train, Y_train, X_val, Y_val, X_test, Y_test)
-    if not args.norun_multi_rbf:
-        multiclass_rbf_svm(Cees, gammas, X_train, Y_train, X_val, Y_val, X_test, Y_test)
+    if multi_class:
+        if not args.norun_multi_lin:
+            multiclass_linear_svm(Cees, X_train, Y_train, X_val, Y_val, X_test, Y_test)
+        if not args.norun_multi_rbf:
+            multiclass_rbf_svm(Cees, gammas, X_train, Y_train, X_val, Y_val, X_test, Y_test)
 
-else:
-    if not args.norun_bin_lin:
-        binary_linear_svm(Cees, X_train, Y_train, X_val, Y_val, X_test, Y_test)
-    if not args.norun_bin_rbf:
-        binary_rbf_svm(Cees, gammas, X_train, Y_train, X_val, Y_val, X_test, Y_test)
+    else:
+        if not args.norun_bin_lin:
+            binary_linear_svm(Cees, X_train, Y_train, X_val, Y_val, X_test, Y_test)
+        if not args.norun_bin_rbf:
+            binary_rbf_svm(Cees, gammas, X_train, Y_train, X_val, Y_val, X_test, Y_test)
 

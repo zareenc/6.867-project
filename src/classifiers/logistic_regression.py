@@ -81,7 +81,7 @@ if __name__ == "__main__":
     frequency = args.frequency
     tf_idf = args.tf_idf
 
-    features = ['average_stars']
+    features = ['average_stars', 'city']
 
     # clean up reviews
     preprocessor_train = Preprocessor(train_csv_file, business_csv_file=args.business_csv, user_csv_file=args.user_csv)
