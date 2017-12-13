@@ -1,13 +1,23 @@
 # Data Manipulation and Preprocessing
 This directory contains scripts for manipulating the Yelp data from the original JSON files into csv files that can be used by our classifiers. Make sure that you run all of these scripts using Python 3.
 
+Sections:
+- [Parsing JSON Data](https://github.com/zareenc/6.867-project/blob/user-attributes/src/preprocessing/README.md#parsing-json-data)
+- [Generating Filters](https://github.com/zareenc/6.867-project/blob/user-attributes/src/preprocessing/README.md#generating-filter)
+- [Filtering CSV Data](https://github.com/zareenc/6.867-project/blob/user-attributes/src/preprocessing/README.md#filtering-csv-data)
+- [Creating Evenly Distributed Datasets](https://github.com/zareenc/6.867-project/blob/user-attributes/src/preprocessing/README.md#creating-evenly-distributed-datasets)
+- [Shuffling Data](https://github.com/zareenc/6.867-project/blob/user-attributes/src/preprocessing/README.md#shuffling-data)
+- [Splitting Data into Train, Validation, and Test Sets](https://github.com/zareenc/6.867-project/blob/user-attributes/src/preprocessing/README.md#splitting-data-into-train-validation-and-test-sets)
+- [Serializing Data](https://github.com/zareenc/6.867-project/blob/user-attributes/src/preprocessing/README.md#serializing-the-data)
+- [Featurizing Data](https://github.com/zareenc/6.867-project/blob/user-attributes/src/preprocessing/README.md#featurizing-data)
+
 ## Parsing JSON Data
 In order to convert one of the original JSON files from the dataset into a csv file, run
 ```
 python json_to_csv_converter.py path_to_json_file path_to_new_csv_file
 ```
 
-## Generating Filter
+## Generating Filters
 To filter one of the data files by some criteria, you can generate a text file with a list of matching IDsby running
 ```
 python get_filter.py path_to_input_file file_type path_to_output_text_file
@@ -68,7 +78,7 @@ python csv_splitter.py data/ filtered_reviews 1000 --percent_train=0.5 --percent
 ```
 This will create 3 new files, filtered_reviews_train.csv, filtered_reviews_val.csv, and filtered_reviews_test.csv in the data/ directory. Each of these new file will have the header from the input file and the relevant number of lines. So filtered_reviews_train.csv will have 50 lines, etc. The default split if you don't give those arguments is 60-20-20. You must put in all parameters if you are not using the default, and there is no checking to see if it adds up to 100%.
 
-## Serializing the Data
+## Serializing Data
 If you want to package the train, validation, and test sets into a pickle file, call
 ```
 python make_pickle_file.csv path_to_training_data path_to_validation_data path_to_testing_data path_to_pickle_file
